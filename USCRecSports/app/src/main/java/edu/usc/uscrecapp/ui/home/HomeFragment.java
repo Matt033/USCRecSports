@@ -39,7 +39,7 @@ public class HomeFragment extends Fragment {
         b_lyon_center.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                rbinding = FragmentReservationBinding.inflate(inflater, container, false);
+                //rbinding = FragmentReservationBinding.inflate(inflater, container, false);
                 Navigation.findNavController(view).navigate(R.id.navigation_reservation);
             }
         });
