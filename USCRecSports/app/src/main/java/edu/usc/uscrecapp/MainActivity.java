@@ -16,6 +16,10 @@ public class MainActivity extends AppCompatActivity {
 
     private ActivityMainBinding binding;
 
+    public void setActionBarTitle(String title) {
+        getSupportActionBar().setTitle(title);
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

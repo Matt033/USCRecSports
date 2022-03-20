@@ -39,7 +39,15 @@ public class HomeFragment extends Fragment {
         b_lyon_center.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //rbinding = FragmentReservationBinding.inflate(inflater, container, false);
+                // todo: get location_id of the clicked button
+                int location_id = 2;
+                int user_id = 3;
+                // pass the location id to the reservation fragment
+                Bundle result = new Bundle();
+                result.putInt("location_id", location_id);
+                result.putInt("user_id", user_id);
+                getParentFragmentManager().setFragmentResult("requestKey", result);
+                // now switch to reservation fragment page
                 Navigation.findNavController(view).navigate(R.id.navigation_reservation);
             }
         });
