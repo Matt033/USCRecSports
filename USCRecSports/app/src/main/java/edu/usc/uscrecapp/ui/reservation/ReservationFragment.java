@@ -317,14 +317,14 @@ public class ReservationFragment extends Fragment {
         b3.setText(day + "\n" + dateName3);
 
         Log.i(">>>>>", "Joshua "+buttonIDs[0]);
-        Button b4 = root.findViewById(R.id.button4);
+        /*Button b4 = root.findViewById(R.id.button4);
         b4.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Log.i(">>>>timeid", ""+info.get(R.id.button4).timeslot_id);
                 new TimeSelectAsyncTask(R.id.button4, info.get(R.id.button4).starttime, info.get(R.id.button4).endtime, info.get(R.id.button4).slotsAvailable, info.get(R.id.button4).timeslot_id).execute();
             }
-        });
+        });*/
         return root;
     }
 
@@ -346,7 +346,6 @@ public class ReservationFragment extends Fragment {
     public class InfoAsyncTask extends AsyncTask<Void, Void, Map<Integer, Availability>> {
         @Override
         protected Map<Integer, Availability> doInBackground(Void... voids) {
-            int count = 0;
             //View root = binding.getRoot();
             try (Connection connection = DriverManager.getConnection(URL, USER, PASSWORD)) {
 
@@ -363,11 +362,12 @@ public class ReservationFragment extends Fragment {
                         resultSet2.next();
                         int slots = resultSet2.getInt("slots_available");
                         Availability a = new Availability();
+                        a.button_id = buttonIDs[i-1];
                         a.starttime = resultSet.getString("start_time");
                         a.endtime = resultSet.getString("end_time");
                         a.slotsAvailable = slots;
-                        info.put(buttonIDs[count], a);
-                        count++;
+                        a.timeslot_id = i;
+                        info.put(buttonIDs[i-1], a);
                     }
                 }
             } catch (Exception e) {
@@ -378,11 +378,11 @@ public class ReservationFragment extends Fragment {
 
         @Override
         protected void onPostExecute(Map<Integer, Availability> result) {
-            Log.i(">>>>> ", "hello");
             for (int i = 0; i < result.size(); i++) {
                 Availability a = result.get(buttonIDs[i]);
-                View root = binding.getRoot();
+                //View root = binding.getRoot();
                 Button b = root.findViewById(buttonIDs[i]);
+                Log.i(">>>>> ", "hello "+ a.timeslot_id);
                 String label = //(String) b4.getText() +
                         a.starttime + " - " + a.endtime + "    " +
                                 a.slotsAvailable + " slots available";
@@ -390,6 +390,24 @@ public class ReservationFragment extends Fragment {
                 if(a.slotsAvailable == 0){
                     b.setEnabled(false);
                 }
+                b.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Log.i(">>>>timeid", ""+a.timeslot_id);
+                        a.slotsAvailable--;
+                        new TimeSelectAsyncTask(a.button_id, a.starttime, a.endtime, a.slotsAvailable, a.timeslot_id).execute();
+                        /*String label =
+                                a.starttime + " - " + a.endtime + "    " +
+                                        a.slotsAvailable + " slots available";
+                        b.setText(label);
+                        if(a.slotsAvailable == 0){
+                            b.setEnabled(false);
+                        }
+                        else{
+                            b.setEnabled(true);
+                        }*/
+                    }
+                });
             }
         }
     }
@@ -462,15 +480,14 @@ public class ReservationFragment extends Fragment {
         int buttonID;
         String starttime;
         String endtime;
-        int slot;  // available slots
+        int slots_available;  // available slots
         int timeslot_id;
 
         public TimeSelectAsyncTask(int id, String start, String end, int slots_avail, int tid) {
             buttonID = id;
-            Log.i("timeslotid",""+tid);
             starttime = start;
             endtime = end;
-            slot = slots_avail;
+            slots_available = slots_avail;
             timeslot_id = tid;
         }
 
@@ -482,24 +499,21 @@ public class ReservationFragment extends Fragment {
                 String sql = "SELECT TIME_FORMAT(start_time, '%h:%i %p') AS start_time," +
                         "TIME_FORMAT(end_time, '%h:%i %p') AS end_time FROM timeslots WHERE timeslot_id=" + timeslot_id;
                 PreparedStatement statement = connection.prepareStatement(sql);
-                Log.i(">>>>>>", sql);
                 /*String sql2 = "SELECT * FROM availability WHERE location_id=" + location + " AND timeslot_id=" + timeslot_id + " AND date='" + dateName +"'";
                 PreparedStatement statement2 = connection.prepareStatement(sql2);*/
                 ResultSet resultSet = statement.executeQuery();
                 //ResultSet resultSet2 = statement2.executeQuery();
                 sql = "UPDATE availability SET slots_available= ? WHERE location_id= ? AND timeslot_id=? AND date=?";
                 PreparedStatement statement2 = connection.prepareStatement(sql);
-                statement2.setInt(1, slot--);
+                statement2.setInt(1, slots_available);
                 statement2.setInt(2, location);
                 statement2.setInt(3, timeslot_id);
                 statement2.setString(4, activeDate);
                 statement2.executeUpdate();
                 while (resultSet.next()) {
-                    //resultSet2.next();
-                    //slot = resultSet2.getInt("slots_available");
                     a.starttime = resultSet.getString("start_time");
                     a.endtime = resultSet.getString("end_time");
-                    a.slotsAvailable = slot;
+                    a.slotsAvailable = slots_available;
                     a.button_id = buttonID;
                     a.timeslot_id = timeslot_id;
                     Log.i(">>>>bid ", ""+buttonID);
