@@ -1,6 +1,7 @@
 package edu.usc.uscrecapp.ui.reservation;
 
 import android.annotation.SuppressLint;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -281,40 +282,56 @@ public class ReservationFragment extends Fragment {
         activeDate = dateName;
         int day = c.get(Calendar.DATE);
         Button b1 = root.findViewById(R.id.button1);
-        b1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                new DateSelectAsyncTask(R.id.button1, dateName).execute();
-                activeDate = dateName;
-            }
-        });
-
         Button b2 = root.findViewById(R.id.button2);
         Button b3 = root.findViewById(R.id.button3);
+        b1.setBackgroundColor(Color.RED);
+        b2.setBackgroundColor(Color.BLUE);
+        b3.setBackgroundColor(Color.BLUE);
+
         b1.setText(day + "\n" + dayName);
         c.add(Calendar.DATE, 1);
         day++;
         dateName2 = c.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.SHORT, Locale.ENGLISH);
+        b2.setText(day + "\n" + dateName2);
+        c.add(Calendar.DATE, 1);
+        day++;
+        dateName3 = c.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.SHORT, Locale.ENGLISH);
+        b3.setText(day + "\n" + dateName3);
+
+        b1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //Button b1 = (Button)view;
+                b1.setBackgroundColor(Color.RED);
+                b2.setBackgroundColor(Color.BLUE);
+                b3.setBackgroundColor(Color.BLUE);
+                new DateSelectAsyncTask(R.id.button1, dateName).execute();
+                activeDate = dateName;
+            }
+        });
         b2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                Button b = (Button)view;
+                b1.setBackgroundColor(Color.BLUE);
+                b2.setBackgroundColor(Color.RED);
+                b3.setBackgroundColor(Color.BLUE);
                 new DateSelectAsyncTask(R.id.button2, dateName2).execute();
                 activeDate = dateName2;
             }
         });
 
-        b2.setText(day + "\n" + dateName2);
-        c.add(Calendar.DATE, 1);
-        day++;
-        dateName3 = c.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.SHORT, Locale.ENGLISH);
         b3.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                Button b = (Button)view;
+                b1.setBackgroundColor(Color.BLUE);
+                b2.setBackgroundColor(Color.BLUE);
+                b3.setBackgroundColor(Color.RED);
                 new DateSelectAsyncTask(R.id.button3, dateName3).execute();
                 activeDate = dateName3;
             }
         });
-        b3.setText(day + "\n" + dateName3);
 
         Log.i(">>>>>", "Joshua "+buttonIDs[0]);
         /*Button b4 = root.findViewById(R.id.button4);
