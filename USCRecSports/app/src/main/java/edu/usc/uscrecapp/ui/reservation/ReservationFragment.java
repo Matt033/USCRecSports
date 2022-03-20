@@ -17,6 +17,7 @@ import androidx.fragment.app.FragmentResultListener;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Locale;
@@ -37,7 +38,7 @@ public class ReservationFragment extends Fragment {
     private FragmentReservationBinding binding;
     private View root;
     int buttonIDs[] = {R.id.button4, R.id.button5, R.id.button6, R.id.button7};
-    Map<Integer, Availability> info = new HashMap<>();
+    HashMap<Integer, Availability> info = new HashMap<>();
     String activeDate;
     String dateName;
     String dateName2;
@@ -334,14 +335,6 @@ public class ReservationFragment extends Fragment {
         });
 
         Log.i(">>>>>", "Joshua "+buttonIDs[0]);
-        /*Button b4 = root.findViewById(R.id.button4);
-        b4.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Log.i(">>>>timeid", ""+info.get(R.id.button4).timeslot_id);
-                new TimeSelectAsyncTask(R.id.button4, info.get(R.id.button4).starttime, info.get(R.id.button4).endtime, info.get(R.id.button4).slotsAvailable, info.get(R.id.button4).timeslot_id).execute();
-            }
-        });*/
         return root;
     }
 
@@ -371,7 +364,7 @@ public class ReservationFragment extends Fragment {
                             "TIME_FORMAT(end_time, '%h:%i %p') AS end_time FROM timeslots WHERE timeslot_id=" + i;
                     PreparedStatement statement = connection.prepareStatement(sql);
                     String sql2 = "SELECT * FROM availability WHERE location_id=" + location + " AND timeslot_id=" + i + " AND date='" + dateName +"'";
-                    Log.i(">>>>>>", sql2);
+                    //Log.i(">>>>>>", sql2);
                     PreparedStatement statement2 = connection.prepareStatement(sql2);
                     ResultSet resultSet = statement.executeQuery();
                     ResultSet resultSet2 = statement2.executeQuery();
@@ -399,9 +392,8 @@ public class ReservationFragment extends Fragment {
                 Availability a = result.get(buttonIDs[i]);
                 //View root = binding.getRoot();
                 Button b = root.findViewById(buttonIDs[i]);
-                Log.i(">>>>> ", "hello "+ a.timeslot_id);
-                String label = //(String) b4.getText() +
-                        a.starttime + " - " + a.endtime + "    " +
+                //Log.i(">>>>> ", "hello "+ a.timeslot_id);
+                String label =  a.starttime + " - " + a.endtime + "    " +
                                 a.slotsAvailable + " slots available";
                 b.setText(label);
                 if(a.slotsAvailable == 0){
@@ -410,19 +402,9 @@ public class ReservationFragment extends Fragment {
                 b.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        Log.i(">>>>timeid", ""+a.timeslot_id);
+                        Log.i(">>> slots", ""+a.slotsAvailable);
                         a.slotsAvailable--;
                         new TimeSelectAsyncTask(a.button_id, a.starttime, a.endtime, a.slotsAvailable, a.timeslot_id).execute();
-                        /*String label =
-                                a.starttime + " - " + a.endtime + "    " +
-                                        a.slotsAvailable + " slots available";
-                        b.setText(label);
-                        if(a.slotsAvailable == 0){
-                            b.setEnabled(false);
-                        }
-                        else{
-                            b.setEnabled(true);
-                        }*/
                     }
                 });
             }
@@ -449,7 +431,7 @@ public class ReservationFragment extends Fragment {
                             "TIME_FORMAT(end_time, '%h:%i %p') AS end_time FROM timeslots WHERE timeslot_id=" + i;
                     PreparedStatement statement = connection.prepareStatement(sql);
                     String sql2 = "SELECT * FROM availability WHERE location_id=" + location + " AND timeslot_id=" + i + " AND date='" + dateName +"'";
-                    Log.i(">>>>>>", sql2);
+                    //Log.i(">>>>>>", sql2);
                     PreparedStatement statement2 = connection.prepareStatement(sql2);
                     ResultSet resultSet = statement.executeQuery();
                     ResultSet resultSet2 = statement2.executeQuery();
@@ -461,6 +443,7 @@ public class ReservationFragment extends Fragment {
                         a.endtime = resultSet.getString("end_time");
                         a.slotsAvailable = slots;
                         a.timeslot_id = i;
+                        a.button_id = buttonIDs[i-1];
                         info.put(buttonIDs[i-1], a);
                     }
                 }
@@ -473,21 +456,26 @@ public class ReservationFragment extends Fragment {
 
         @Override
         protected void onPostExecute(Map<Integer, Availability> result) {
-            Log.i(">>>>> ", "hello world");
             for (int i = 0; i < result.size(); i++) {
+                //Log.i(">>> timeslect "+i, ""+buttonIDs[i]);
                 Availability a = result.get(buttonIDs[i]);
-                //View root = binding.getRoot();
                 Button b = root.findViewById(buttonIDs[i]);
-                String label =
-                        a.starttime + " - " + a.endtime + "    " +
+                String label =  a.starttime + " - " + a.endtime + "    " +
                                 a.slotsAvailable + " slots available";
                 b.setText(label);
-                if(a.slotsAvailable == 0){
+                if(a.slotsAvailable == 0)
                     b.setEnabled(false);
-                }
-                else{
+                else
                     b.setEnabled(true);
-                }
+
+                b.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        //Log.i(">>>> button ids "+info.size(), ""+info.keySet());
+                        a.slotsAvailable--;
+                        new TimeSelectAsyncTask(a.button_id, a.starttime, a.endtime, a.slotsAvailable, a.timeslot_id).execute();
+                    }
+                });
             }
         }
     }
@@ -516,10 +504,7 @@ public class ReservationFragment extends Fragment {
                 String sql = "SELECT TIME_FORMAT(start_time, '%h:%i %p') AS start_time," +
                         "TIME_FORMAT(end_time, '%h:%i %p') AS end_time FROM timeslots WHERE timeslot_id=" + timeslot_id;
                 PreparedStatement statement = connection.prepareStatement(sql);
-                /*String sql2 = "SELECT * FROM availability WHERE location_id=" + location + " AND timeslot_id=" + timeslot_id + " AND date='" + dateName +"'";
-                PreparedStatement statement2 = connection.prepareStatement(sql2);*/
                 ResultSet resultSet = statement.executeQuery();
-                //ResultSet resultSet2 = statement2.executeQuery();
                 sql = "UPDATE availability SET slots_available= ? WHERE location_id= ? AND timeslot_id=? AND date=?";
                 PreparedStatement statement2 = connection.prepareStatement(sql);
                 statement2.setInt(1, slots_available);
@@ -533,7 +518,7 @@ public class ReservationFragment extends Fragment {
                     a.slotsAvailable = slots_available;
                     a.button_id = buttonID;
                     a.timeslot_id = timeslot_id;
-                    Log.i(">>>>bid ", ""+buttonID);
+                    //Log.i(">>>>bid ", ""+buttonID);
                 }
 
             } catch (Exception e) {
@@ -544,19 +529,20 @@ public class ReservationFragment extends Fragment {
 
         @Override
         protected void onPostExecute(Availability a) {
-            Log.i(">>>>> ", "hello world "+a.button_id);
-                //View root = binding.getRoot();
-                Button b = root.findViewById(a.button_id);
-                String label =
-                        a.starttime + " - " + a.endtime + "    " +
-                                a.slotsAvailable + " slots available";
-                b.setText(label);
-                if(a.slotsAvailable == 0){
-                    b.setEnabled(false);
-                }
-                else{
-                    b.setEnabled(true);
-                }
+            //Log.i(">>>>> ", "hello world "+a.button_id);
+            Button b = root.findViewById(a.button_id);
+            String label =
+                    a.starttime + " - " + a.endtime + "    " +
+                            a.slotsAvailable + " slots available";
+            b.setText(label);
+            if(a.slotsAvailable == 0){
+                b.setEnabled(false);
+            }
+            else{
+                b.setEnabled(true);
+            }
+            TextView t = root.findViewById(R.id.confirmation);
+            t.setText("reserved "+a.starttime + "-" + a.endtime + " on " + activeDate);
         }
     }
 
