@@ -43,6 +43,7 @@ public class ReservationFragment extends Fragment {
     String dateName;
     String dateName2;
     String dateName3;
+    // This flag represents the mode between reservation and wait-list
     boolean res = true;
     int location;
     int user_id;
@@ -57,31 +58,6 @@ public class ReservationFragment extends Fragment {
             ((MainActivity) getActivity()).setActionBarTitle("Reservation - Lyon Center");
         else
             ((MainActivity) getActivity()).setActionBarTitle("Reservation - UV Fitness Center");
-        Button rb = root.findViewById(R.id.button);
-        rb.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Button b = (Button)view;
-                if (res) {
-                    b.setBackgroundColor(Color.RED);
-                    b.setText("switch to Reservation");
-                    res = false;
-                } else {
-                    b.setBackgroundColor(Color.BLUE);
-                    res = true;
-                    b.setText("remind me");
-                }
-                for (int i = 0; i < buttonIDs.length; i++) {
-                    Button btn = root.findViewById(buttonIDs[i]);
-                    if (btn.isEnabled())
-                        btn.setEnabled(false);
-                    else
-                        btn.setEnabled(true);
-                }
-                TextView t = root.findViewById(R.id.confirmation);
-                t.setText("");
-            }
-        });
     }
 
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -94,7 +70,9 @@ public class ReservationFragment extends Fragment {
 
         final TextView textView = binding.textReservation;
         reservationViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
-        Connection connection;
+
+        location = ((MainActivity) getActivity()).getLocationId();
+        user_id = ((MainActivity) getActivity()).getUserId();
         getParentFragmentManager().setFragmentResultListener("requestKey", this, new FragmentResultListener() {
             @Override
             public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle bundle) {
@@ -165,8 +143,35 @@ public class ReservationFragment extends Fragment {
 
         Button rb = root.findViewById(R.id.button);
         rb.setBackgroundColor(Color.BLUE);
+        rb.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Button b = (Button)view;
+                TextView t = root.findViewById(R.id.confirmation);
+                if (res) {
+                    b.setBackgroundColor(Color.RED);
+                    b.setText("switch to Reservation");
+                    res = false;
+                    t.setText("Select time to be wait-listed.");
+                } else {
+                    b.setBackgroundColor(Color.BLUE);
+                    res = true;
+                    b.setText("remind me");
+                    t.setText("Select time to make a reservation.");
+                }
+                for (int i = 0; i < buttonIDs.length; i++) {
+                    Button btn = root.findViewById(buttonIDs[i]);
+                    if (btn.isEnabled())
+                        btn.setEnabled(false);
+                    else
+                        btn.setEnabled(true);
+                }
+            }
+        });
 
-        Log.i(">>>>>", "Joshua "+buttonIDs[0]);
+        TextView t = root.findViewById(R.id.confirmation);
+        t.setText("Select time to make a reservation.");
+        new InfoAsyncTask().execute();
         return root;
     }
 
@@ -222,7 +227,6 @@ public class ReservationFragment extends Fragment {
         protected void onPostExecute(Map<Integer, Availability> result) {
             for (int i = 0; i < result.size(); i++) {
                 Availability a = result.get(buttonIDs[i]);
-                //View root = binding.getRoot();
                 Button b = root.findViewById(buttonIDs[i]);
                 //Log.i(">>>>> ", "hello "+ a.timeslot_id);
                 String label =  a.starttime + " - " + a.endtime + "    " +
@@ -382,9 +386,9 @@ public class ReservationFragment extends Fragment {
                     b.setEnabled(false);
                 else
                     b.setEnabled(true);
-                t.setText("reserved " + a.starttime + "-" + a.endtime + " on " + activeDate);
+                t.setText("Reserved " + a.starttime + "-" + a.endtime + " on " + activeDate);
             } else {
-                t.setText("wait-listed "+ a.starttime + "-" + a.endtime + " on " + activeDate);
+                t.setText("Wait-listed "+ a.starttime + "-" + a.endtime + " on " + activeDate);
             }
         }
     }
