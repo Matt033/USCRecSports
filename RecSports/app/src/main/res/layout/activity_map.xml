@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MapActivity"
+    android:background="@drawable/uscmap"
+    >
+
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="132dp"
+        android:layout_height="59dp"
+        android:text="Lyon Center"
+        android:background="@color/white"
+        tools:layout_editor_absoluteX="107dp"
+        tools:layout_editor_absoluteY="122dp"
+        android:onClick="showLyonCenter"
+        />
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="146dp"
+        android:layout_height="76dp"
+        android:text="Cromwell Track"
+        android:background="@color/white"
+        tools:layout_editor_absoluteX="136dp"
+        tools:layout_editor_absoluteY="226dp"
+        android:onClick="showCromwellTrack"/>
+
+    <TextView
+        android:id="@+id/textView3"
+        android:layout_width="165dp"
+        android:layout_height="81dp"
+        android:text="USC Village Fitness Center"
+        android:onClick="showVillage"
+        android:background="@color/white"
+        tools:layout_editor_absoluteX="126dp"
+        tools:layout_editor_absoluteY="358dp" />
+    <TextView
+        android:id="@+id/textView4"
+        android:layout_width="165dp"
+        android:layout_height="81dp"
+        android:text="User Profile Page"
+        android:onClick="showUserProfile"
+        android:background="@color/white"
+        tools:layout_editor_absoluteX="126dp"
+        tools:layout_editor_absoluteY="458dp" />
+</androidx.constraintlayout.widget.ConstraintLayout>
