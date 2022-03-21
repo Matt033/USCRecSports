@@ -10,5 +10,8 @@ public class MapActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
+
+        Button lyon_center = findViewById(R.id.lyonCenter);
+        
     }
 }
