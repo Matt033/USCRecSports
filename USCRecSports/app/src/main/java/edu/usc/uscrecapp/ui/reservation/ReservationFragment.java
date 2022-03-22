@@ -349,12 +349,25 @@ public class ReservationFragment extends Fragment {
                         "TIME_FORMAT(end_time, '%h:%i %p') AS end_time FROM timeslots WHERE timeslot_id=" + timeslot_id;
                 PreparedStatement statement = connection.prepareStatement(sql);
                 ResultSet resultSet = statement.executeQuery();
-                sql = "UPDATE availability SET slots_available= ? WHERE location_id= ? AND timeslot_id=? AND date=?";
-                PreparedStatement statement2 = connection.prepareStatement(sql);
-                statement2.setInt(1, slots_available);
-                statement2.setInt(2, location);
-                statement2.setInt(3, timeslot_id);
-                statement2.setString(4, activeDate);
+                PreparedStatement statement2;
+                if(res) {
+                    sql = "UPDATE availability SET slots_available= ? WHERE location_id= ? AND timeslot_id=? AND date=?";
+                    statement2 = connection.prepareStatement(sql);
+                    statement2.setInt(1, slots_available);
+                    statement2.setInt(2, location);
+                    statement2.setInt(3, timeslot_id);
+                    statement2.setString(4, activeDate);
+                    statement2.executeUpdate();
+
+                    sql = "INSERT INTO reservations (user_id, timeslot_id, location_id) VALUES (?,?,?)";
+                }
+                else{
+                    sql = "INSERT INTO waiting_lists (user_id, timeslot_id, location_id) VALUES (?,?,?)";
+                }
+                statement2 = connection.prepareStatement(sql);
+                statement2.setInt(1, user_id);
+                statement2.setInt(2, timeslot_id);
+                statement2.setInt(3, location);
                 statement2.executeUpdate();
                 while (resultSet.next()) {
                     a.starttime = resultSet.getString("start_time");
