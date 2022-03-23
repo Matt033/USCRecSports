@@ -17,11 +17,13 @@ import androidx.fragment.app.FragmentResultListener;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Locale;
 import java.sql.*;
 import java.util.Map;
+import java.util.Date;
 
 import javax.xml.transform.Result;
 
@@ -37,209 +39,18 @@ public class ReservationFragment extends Fragment {
     private FragmentReservationBinding binding;
     private View root;
     int buttonIDs[] = {R.id.button4, R.id.button5, R.id.button6, R.id.button7};
-    Map<Integer, Availability> info = new HashMap<>();
+    HashMap<Integer, Availability> info = new HashMap<>();
     String activeDate;
     String dateName;
     String dateName2;
     String dateName3;
+    Date selectedDate;
+    Date firstDate, secondDate, thirdDate;
+
+    // This flag represents the mode between reservation and wait-list
     boolean res = true;
     int location;
     int user_id;
-    //@Override
-    public void onClick(View v) {
-        int count = 0;
-        int c;
-        switch(v.getId()) {
-            case R.id.button1:
-                info.clear();
-                count = 0;
-                try (Connection connection = DriverManager.getConnection(URL, USER, PASSWORD)) {
-                    for(int i = 1; i < 5; i++) {
-                        String sql = "SELECT TIME_FORMAT(start_time, '%h:%i %p') AS start_time," +
-                                "TIME_FORMAT(end_time, '%h:%i %p') AS end_time FROM timeslots WHERE timeslot_id=" + i;
-                        PreparedStatement statement = connection.prepareStatement(sql);
-                        String sql2 = "SELECT * FROM availability WHERE location_id=" + location + " AND timeslot_id=" + i + " AND date='" + dateName +"'";
-                        Log.i(">>>>>>", sql2);
-                        PreparedStatement statement2 = connection.prepareStatement(sql2);
-                        ResultSet resultSet = statement.executeQuery();
-                        ResultSet resultSet2 = statement2.executeQuery();
-                        while (resultSet.next()) {
-                            resultSet2.next();
-                            int slots = resultSet2.getInt("slots_available");
-                            Availability a = new Availability();
-                            a.starttime = resultSet.getString("start_time");
-                            a.endtime = resultSet.getString("end_time");
-                            a.slotsAvailable = slots;
-                            info.put(buttonIDs[count], a);
-                            count++;
-                        }
-                    }
-                } catch (Exception e) {
-                    Log.e("USC Rec Sports", "Error during MySQL communication", e);
-                }
-                for (int i = 0; i < info.size(); i++) {
-                    Availability a = info.get(buttonIDs[i]);
-                    View root = binding.getRoot();
-                    Button b = root.findViewById(buttonIDs[i]);
-                    String label = a.starttime + " - " + a.endtime + "    " + a.slotsAvailable + " slots available";
-                    b.setText(label);
-                    if(a.slotsAvailable == 0){
-                        b.setEnabled(false);
-                    }
-                }
-
-            case R.id.button2:
-                info.clear();
-                count = 0;
-                try (Connection connection = DriverManager.getConnection(URL, USER, PASSWORD)) {
-                    for(int i = 1; i < 5; i++) {
-                        String sql = "SELECT TIME_FORMAT(start_time, '%h:%i %p') AS start_time," +
-                                "TIME_FORMAT(end_time, '%h:%i %p') AS end_time FROM timeslots WHERE timeslot_id=" + i;
-                        PreparedStatement statement = connection.prepareStatement(sql);
-                        String sql2 = "FROM availability WHERE location_id=" + location + " AND timeslot_id=" + i + " AND date='" + dateName2 +"'";
-                        Log.i(">>>>>>", sql2);
-                        Log.i(">>>>>>>", "AHHHHHHHHHHHHHHHHHHHHHHH");
-                        PreparedStatement statement2 = connection.prepareStatement(sql2);
-                        ResultSet resultSet = statement.executeQuery();
-                        ResultSet resultSet2 = statement2.executeQuery();
-                        while (resultSet.next()) {
-                            resultSet2.next();
-                            int slots = resultSet2.getInt("slots_available");
-                            Availability a = new Availability();
-                            a.starttime = resultSet.getString("start_time");
-                            a.endtime = resultSet.getString("end_time");
-                            a.slotsAvailable = slots;
-                            info.put(buttonIDs[count], a);
-                            count++;
-                        }
-                    }
-                } catch (Exception e) {
-                    Log.e("USC Rec Sports", "Error during MySQL communication", e);
-                }
-                for (int i = 0; i < info.size(); i++) {
-                    Availability a = info.get(buttonIDs[i]);
-                    View root = binding.getRoot();
-                    Button b = root.findViewById(buttonIDs[i]);
-                    String label = a.starttime + " - " + a.endtime + "    " + a.slotsAvailable + " slots available";
-                    b.setText(label);
-                    if(a.slotsAvailable == 0){
-                        b.setEnabled(false);
-                    }
-                }
-
-            case R.id.button3:
-                info.clear();
-                count = 0;
-                try (Connection connection = DriverManager.getConnection(URL, USER, PASSWORD)) {
-                    for(int i = 1; i < 5; i++) {
-                        String sql = "SELECT TIME_FORMAT(start_time, '%h:%i %p') AS start_time," +
-                                "TIME_FORMAT(end_time, '%h:%i %p') AS end_time FROM timeslots WHERE timeslot_id=" + i;
-                        PreparedStatement statement = connection.prepareStatement(sql);
-                        String sql2 = "SELECT * FROM availability WHERE location_id=" + location + " AND timeslot_id=" + i + " AND date='" + dateName3 +"'";
-                        Log.i(">>>>>>", sql2);
-                        PreparedStatement statement2 = connection.prepareStatement(sql2);
-                        ResultSet resultSet = statement.executeQuery();
-                        ResultSet resultSet2 = statement2.executeQuery();
-                        while (resultSet.next()) {
-                            resultSet2.next();
-                            int slots = resultSet2.getInt("slots_available");
-                            Availability a = new Availability();
-                            a.starttime = resultSet.getString("start_time");
-                            a.endtime = resultSet.getString("end_time");
-                            a.slotsAvailable = slots;
-                            info.put(buttonIDs[count], a);
-                            count++;
-                        }
-                    }
-                } catch (Exception e) {
-                    Log.e("USC Rec Sports", "Error during MySQL communication", e);
-                }
-                for (int i = 0; i < info.size(); i++) {
-                    Availability a = info.get(buttonIDs[i]);
-                    View root = binding.getRoot();
-                    Button b = root.findViewById(buttonIDs[i]);
-                    String label = a.starttime + " - " + a.endtime + "    " + a.slotsAvailable + " slots available";
-                    b.setText(label);
-                    if(a.slotsAvailable == 0){
-                        b.setEnabled(false);
-                    }
-                }
-
-            case R.id.button4:
-                try (Connection connection = DriverManager.getConnection(URL, USER, PASSWORD)) {
-                    String sql = "SELECT * FROM availability WHERE location_id=" + location;
-                    Log.i("s", sql);
-                    PreparedStatement statement = connection.prepareStatement(sql);
-                    ResultSet resultSet = statement.executeQuery();
-                    c = resultSet.getInt("slots_available");
-                    c--;
-                    sql = "UPDATE availability SET slots_available= ? WHERE location_id= ?";
-                    statement = connection.prepareStatement(sql);
-                    statement.setInt(1, c);
-                    statement.setInt(2, location);
-                    int row = statement.executeUpdate();
-                    Button b4 = v.findViewById(buttonIDs[0]);
-                    //String label = a.starttime + " - " + a.endtime + "    " + a.slotsAvailable + " slots available";
-                    //b4.setText(label);
-                } catch (Exception e) {
-                    Log.e("InfoAsyncTask", "Error reading school information", e);
-                }
-
-            case R.id.button5:
-                try (Connection connection = DriverManager.getConnection(URL, USER, PASSWORD)) {
-                    String sql = "SELECT * FROM availability WHERE location_id=" + location;
-                    Log.i("s", sql);
-                    PreparedStatement statement = connection.prepareStatement(sql);
-                    ResultSet resultSet = statement.executeQuery();
-                    c = resultSet.getInt("slots_available");
-                    c--;
-                    sql = "UPDATE availability SET slots_available= ? WHERE location_id= ?";
-                    statement = connection.prepareStatement(sql);
-                    statement.setInt(1, c);
-                    statement.setInt(2, location);
-                    int row = statement.executeUpdate();
-                    System.out.println(row);
-                } catch (Exception e) {
-                    Log.e("InfoAsyncTask", "Error reading school information", e);
-                }
-
-            case R.id.button6:
-                try (Connection connection = DriverManager.getConnection(URL, USER, PASSWORD)) {
-                    String sql = "SELECT * FROM availability WHERE location_id=" + location;
-                    Log.i("s", sql);
-                    PreparedStatement statement = connection.prepareStatement(sql);
-                    ResultSet resultSet = statement.executeQuery();
-                    c = resultSet.getInt("slots_available");
-                    c--;
-                    sql = "UPDATE availability SET slots_available= ? WHERE location_id= ?";
-                    statement = connection.prepareStatement(sql);
-                    statement.setInt(1, c);
-                    statement.setInt(2, location);
-                    int row = statement.executeUpdate();
-                    System.out.println(row);
-                } catch (Exception e) {
-                    Log.e("InfoAsyncTask", "Error reading school information", e);
-                }
-
-            case R.id.button7:
-                try (Connection connection = DriverManager.getConnection(URL, USER, PASSWORD)) {
-                    String sql = "SELECT * FROM availability WHERE location_id=" + location;
-                    Log.i("s", sql);
-                    PreparedStatement statement = connection.prepareStatement(sql);
-                    ResultSet resultSet = statement.executeQuery();
-                    c = resultSet.getInt("slots_available");
-                    c--;
-                    sql = "UPDATE availability SET slots_available= ? WHERE location_id= ?";
-                    statement = connection.prepareStatement(sql);
-                    statement.setInt(1, c);
-                    statement.setInt(2, location);
-                    int row = statement.executeUpdate();
-                    System.out.println(row);
-                } catch (Exception e) {
-                    Log.e("InfoAsyncTask", "Error reading school information", e);
-                }
-        }
-    }
 
     @Override
     public void onResume(){
@@ -263,7 +74,9 @@ public class ReservationFragment extends Fragment {
 
         final TextView textView = binding.textReservation;
         reservationViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
-        Connection connection;
+
+        location = ((MainActivity) getActivity()).getLocationId();
+        user_id = ((MainActivity) getActivity()).getUserId();
         getParentFragmentManager().setFragmentResultListener("requestKey", this, new FragmentResultListener() {
             @Override
             public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle bundle) {
@@ -273,7 +86,6 @@ public class ReservationFragment extends Fragment {
                 Log.i(">>>>>", "location received from home fragment is "+location);
                 Log.i(">>>>>", "user_id received from home fragment is "+user_id);
                 new InfoAsyncTask().execute();
-                // function to initialize info
             }
         });
         Calendar c = Calendar.getInstance();
@@ -281,6 +93,8 @@ public class ReservationFragment extends Fragment {
         dateName = dayName;
         activeDate = dateName;
         int day = c.get(Calendar.DATE);
+        firstDate = c.getTime();
+        selectedDate = firstDate;
         Button b1 = root.findViewById(R.id.button1);
         Button b2 = root.findViewById(R.id.button2);
         Button b3 = root.findViewById(R.id.button3);
@@ -290,10 +104,12 @@ public class ReservationFragment extends Fragment {
 
         b1.setText(day + "\n" + dayName);
         c.add(Calendar.DATE, 1);
+        secondDate = c.getTime();
         day++;
         dateName2 = c.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.SHORT, Locale.ENGLISH);
         b2.setText(day + "\n" + dateName2);
         c.add(Calendar.DATE, 1);
+        thirdDate = c.getTime();
         day++;
         dateName3 = c.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.SHORT, Locale.ENGLISH);
         b3.setText(day + "\n" + dateName3);
@@ -307,6 +123,7 @@ public class ReservationFragment extends Fragment {
                 b3.setBackgroundColor(Color.BLUE);
                 new DateSelectAsyncTask(R.id.button1, dateName).execute();
                 activeDate = dateName;
+                selectedDate = firstDate;
             }
         });
         b2.setOnClickListener(new View.OnClickListener() {
@@ -318,6 +135,7 @@ public class ReservationFragment extends Fragment {
                 b3.setBackgroundColor(Color.BLUE);
                 new DateSelectAsyncTask(R.id.button2, dateName2).execute();
                 activeDate = dateName2;
+                selectedDate = secondDate;
             }
         });
 
@@ -330,18 +148,41 @@ public class ReservationFragment extends Fragment {
                 b3.setBackgroundColor(Color.RED);
                 new DateSelectAsyncTask(R.id.button3, dateName3).execute();
                 activeDate = dateName3;
+                selectedDate = thirdDate;
             }
         });
 
-        Log.i(">>>>>", "Joshua "+buttonIDs[0]);
-        /*Button b4 = root.findViewById(R.id.button4);
-        b4.setOnClickListener(new View.OnClickListener() {
+        Button rb = root.findViewById(R.id.button);
+        rb.setBackgroundColor(Color.BLUE);
+        rb.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Log.i(">>>>timeid", ""+info.get(R.id.button4).timeslot_id);
-                new TimeSelectAsyncTask(R.id.button4, info.get(R.id.button4).starttime, info.get(R.id.button4).endtime, info.get(R.id.button4).slotsAvailable, info.get(R.id.button4).timeslot_id).execute();
+                Button b = (Button)view;
+                TextView t = root.findViewById(R.id.confirmation);
+                if (res) {
+                    b.setBackgroundColor(Color.RED);
+                    b.setText("switch to Reservation");
+                    res = false;
+                    t.setText("Select time to be wait-listed.");
+                } else {
+                    b.setBackgroundColor(Color.BLUE);
+                    res = true;
+                    b.setText("remind me");
+                    t.setText("Select time to make a reservation.");
+                }
+                for (int i = 0; i < buttonIDs.length; i++) {
+                    Button btn = root.findViewById(buttonIDs[i]);
+                    if (btn.isEnabled())
+                        btn.setEnabled(false);
+                    else
+                        btn.setEnabled(true);
+                }
             }
-        });*/
+        });
+
+        TextView t = root.findViewById(R.id.confirmation);
+        t.setText("Select time to make a reservation.");
+        new InfoAsyncTask().execute();
         return root;
     }
 
@@ -371,7 +212,7 @@ public class ReservationFragment extends Fragment {
                             "TIME_FORMAT(end_time, '%h:%i %p') AS end_time FROM timeslots WHERE timeslot_id=" + i;
                     PreparedStatement statement = connection.prepareStatement(sql);
                     String sql2 = "SELECT * FROM availability WHERE location_id=" + location + " AND timeslot_id=" + i + " AND date='" + dateName +"'";
-                    Log.i(">>>>>>", sql2);
+                    //Log.i(">>>>>>", sql2);
                     PreparedStatement statement2 = connection.prepareStatement(sql2);
                     ResultSet resultSet = statement.executeQuery();
                     ResultSet resultSet2 = statement2.executeQuery();
@@ -397,11 +238,9 @@ public class ReservationFragment extends Fragment {
         protected void onPostExecute(Map<Integer, Availability> result) {
             for (int i = 0; i < result.size(); i++) {
                 Availability a = result.get(buttonIDs[i]);
-                //View root = binding.getRoot();
                 Button b = root.findViewById(buttonIDs[i]);
-                Log.i(">>>>> ", "hello "+ a.timeslot_id);
-                String label = //(String) b4.getText() +
-                        a.starttime + " - " + a.endtime + "    " +
+                //Log.i(">>>>> ", "hello "+ a.timeslot_id);
+                String label =  a.starttime + " - " + a.endtime + "    " +
                                 a.slotsAvailable + " slots available";
                 b.setText(label);
                 if(a.slotsAvailable == 0){
@@ -410,19 +249,10 @@ public class ReservationFragment extends Fragment {
                 b.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        Log.i(">>>>timeid", ""+a.timeslot_id);
-                        a.slotsAvailable--;
+                        Log.i(">>> slots", ""+a.slotsAvailable);
+                        if (res)
+                            a.slotsAvailable--;
                         new TimeSelectAsyncTask(a.button_id, a.starttime, a.endtime, a.slotsAvailable, a.timeslot_id).execute();
-                        /*String label =
-                                a.starttime + " - " + a.endtime + "    " +
-                                        a.slotsAvailable + " slots available";
-                        b.setText(label);
-                        if(a.slotsAvailable == 0){
-                            b.setEnabled(false);
-                        }
-                        else{
-                            b.setEnabled(true);
-                        }*/
                     }
                 });
             }
@@ -449,7 +279,7 @@ public class ReservationFragment extends Fragment {
                             "TIME_FORMAT(end_time, '%h:%i %p') AS end_time FROM timeslots WHERE timeslot_id=" + i;
                     PreparedStatement statement = connection.prepareStatement(sql);
                     String sql2 = "SELECT * FROM availability WHERE location_id=" + location + " AND timeslot_id=" + i + " AND date='" + dateName +"'";
-                    Log.i(">>>>>>", sql2);
+                    //Log.i(">>>>>>", sql2);
                     PreparedStatement statement2 = connection.prepareStatement(sql2);
                     ResultSet resultSet = statement.executeQuery();
                     ResultSet resultSet2 = statement2.executeQuery();
@@ -461,6 +291,7 @@ public class ReservationFragment extends Fragment {
                         a.endtime = resultSet.getString("end_time");
                         a.slotsAvailable = slots;
                         a.timeslot_id = i;
+                        a.button_id = buttonIDs[i-1];
                         info.put(buttonIDs[i-1], a);
                     }
                 }
@@ -473,21 +304,33 @@ public class ReservationFragment extends Fragment {
 
         @Override
         protected void onPostExecute(Map<Integer, Availability> result) {
-            Log.i(">>>>> ", "hello world");
             for (int i = 0; i < result.size(); i++) {
+                //Log.i(">>> timeslect "+i, ""+buttonIDs[i]);
                 Availability a = result.get(buttonIDs[i]);
-                //View root = binding.getRoot();
                 Button b = root.findViewById(buttonIDs[i]);
-                String label =
-                        a.starttime + " - " + a.endtime + "    " +
+                String label =  a.starttime + " - " + a.endtime + "    " +
                                 a.slotsAvailable + " slots available";
                 b.setText(label);
-                if(a.slotsAvailable == 0){
-                    b.setEnabled(false);
+                if (res) {
+                    if (a.slotsAvailable == 0)
+                        b.setEnabled(false);
+                    else
+                        b.setEnabled(true);
+                } else {
+                    if (a.slotsAvailable == 0)
+                        b.setEnabled(true);
+                    else
+                        b.setEnabled(false);
                 }
-                else{
-                    b.setEnabled(true);
-                }
+                b.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        //Log.i(">>>> button ids "+info.size(), ""+info.keySet());
+                        if (res)
+                            a.slotsAvailable--;
+                        new TimeSelectAsyncTask(a.button_id, a.starttime, a.endtime, a.slotsAvailable, a.timeslot_id).execute();
+                    }
+                });
             }
         }
     }
@@ -516,16 +359,28 @@ public class ReservationFragment extends Fragment {
                 String sql = "SELECT TIME_FORMAT(start_time, '%h:%i %p') AS start_time," +
                         "TIME_FORMAT(end_time, '%h:%i %p') AS end_time FROM timeslots WHERE timeslot_id=" + timeslot_id;
                 PreparedStatement statement = connection.prepareStatement(sql);
-                /*String sql2 = "SELECT * FROM availability WHERE location_id=" + location + " AND timeslot_id=" + timeslot_id + " AND date='" + dateName +"'";
-                PreparedStatement statement2 = connection.prepareStatement(sql2);*/
                 ResultSet resultSet = statement.executeQuery();
-                //ResultSet resultSet2 = statement2.executeQuery();
-                sql = "UPDATE availability SET slots_available= ? WHERE location_id= ? AND timeslot_id=? AND date=?";
-                PreparedStatement statement2 = connection.prepareStatement(sql);
-                statement2.setInt(1, slots_available);
-                statement2.setInt(2, location);
-                statement2.setInt(3, timeslot_id);
-                statement2.setString(4, activeDate);
+                PreparedStatement statement2;
+                if(res) {
+                    sql = "UPDATE availability SET slots_available= ? WHERE location_id= ? AND timeslot_id=? AND date=?";
+                    statement2 = connection.prepareStatement(sql);
+                    statement2.setInt(1, slots_available);
+                    statement2.setInt(2, location);
+                    statement2.setInt(3, timeslot_id);
+                    statement2.setString(4, activeDate);
+                    statement2.executeUpdate();
+
+                    sql = "INSERT INTO reservations (user_id, timeslot_id, location_id, date) VALUES (?,?,?,?)";
+                }
+                else{
+                    sql = "INSERT INTO waiting_lists (user_id, timeslot_id, location_id, date) VALUES (?,?,?,?)";
+                }
+                java.sql.Date sqlDate = new java.sql.Date(selectedDate.getTime());
+                statement2 = connection.prepareStatement(sql);
+                statement2.setInt(1, user_id);
+                statement2.setInt(2, timeslot_id);
+                statement2.setInt(3, location);
+                statement2.setDate(4, sqlDate);
                 statement2.executeUpdate();
                 while (resultSet.next()) {
                     a.starttime = resultSet.getString("start_time");
@@ -533,9 +388,8 @@ public class ReservationFragment extends Fragment {
                     a.slotsAvailable = slots_available;
                     a.button_id = buttonID;
                     a.timeslot_id = timeslot_id;
-                    Log.i(">>>>bid ", ""+buttonID);
+                    //Log.i(">>>>bid ", ""+buttonID);
                 }
-
             } catch (Exception e) {
                 Log.e("USC Rec Sports", "Error during MySQL communication", e);
             }
@@ -544,19 +398,23 @@ public class ReservationFragment extends Fragment {
 
         @Override
         protected void onPostExecute(Availability a) {
-            Log.i(">>>>> ", "hello world "+a.button_id);
-                //View root = binding.getRoot();
-                Button b = root.findViewById(a.button_id);
-                String label =
-                        a.starttime + " - " + a.endtime + "    " +
-                                a.slotsAvailable + " slots available";
-                b.setText(label);
-                if(a.slotsAvailable == 0){
+            //Log.i(">>>>> ", "hello world "+a.button_id);
+            Button b = root.findViewById(a.button_id);
+            String label =
+                    a.starttime + " - " + a.endtime + "    " +
+                            a.slotsAvailable + " slots available";
+            b.setText(label);
+
+            TextView t = root.findViewById(R.id.confirmation);
+            if (res) {
+                if (a.slotsAvailable == 0)
                     b.setEnabled(false);
-                }
-                else{
+                else
                     b.setEnabled(true);
-                }
+                t.setText("Reserved " + a.starttime + "-" + a.endtime + " on " + activeDate);
+            } else {
+                t.setText("Wait-listed "+ a.starttime + "-" + a.endtime + " on " + activeDate);
+            }
         }
     }
 

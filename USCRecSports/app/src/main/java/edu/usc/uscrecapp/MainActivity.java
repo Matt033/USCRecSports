@@ -15,6 +15,8 @@ import edu.usc.uscrecapp.databinding.ActivityMainBinding;
 public class MainActivity extends AppCompatActivity {
 
     private ActivityMainBinding binding;
+    private int user_id;
+    private int location_id;
 
     public void setActionBarTitle(String title) {
         getSupportActionBar().setTitle(title);
@@ -38,4 +40,19 @@ public class MainActivity extends AppCompatActivity {
         NavigationUI.setupWithNavController(binding.navView, navController);
     }
 
-}
+    public void setUserId(int id) {
+        user_id = id;
+    }
+
+    public void setLocationId(int id) {
+        location_id = id;
+    }
+
+    public int getUserId() {
+        return user_id;
+    }
+
+    public int getLocationId() {
+        return location_id;
+    }
+};
