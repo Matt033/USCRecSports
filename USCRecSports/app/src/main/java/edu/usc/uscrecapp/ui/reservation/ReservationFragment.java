@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.sql.*;
 import java.util.Map;
+import java.util.Date;
 
 import javax.xml.transform.Result;
 
@@ -43,6 +44,9 @@ public class ReservationFragment extends Fragment {
     String dateName;
     String dateName2;
     String dateName3;
+    Date selectedDate;
+    Date firstDate, secondDate, thirdDate;
+
     // This flag represents the mode between reservation and wait-list
     boolean res = true;
     int location;
@@ -89,6 +93,8 @@ public class ReservationFragment extends Fragment {
         dateName = dayName;
         activeDate = dateName;
         int day = c.get(Calendar.DATE);
+        firstDate = c.getTime();
+        selectedDate = firstDate;
         Button b1 = root.findViewById(R.id.button1);
         Button b2 = root.findViewById(R.id.button2);
         Button b3 = root.findViewById(R.id.button3);
@@ -98,10 +104,12 @@ public class ReservationFragment extends Fragment {
 
         b1.setText(day + "\n" + dayName);
         c.add(Calendar.DATE, 1);
+        secondDate = c.getTime();
         day++;
         dateName2 = c.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.SHORT, Locale.ENGLISH);
         b2.setText(day + "\n" + dateName2);
         c.add(Calendar.DATE, 1);
+        thirdDate = c.getTime();
         day++;
         dateName3 = c.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.SHORT, Locale.ENGLISH);
         b3.setText(day + "\n" + dateName3);
@@ -115,6 +123,7 @@ public class ReservationFragment extends Fragment {
                 b3.setBackgroundColor(Color.BLUE);
                 new DateSelectAsyncTask(R.id.button1, dateName).execute();
                 activeDate = dateName;
+                selectedDate = firstDate;
             }
         });
         b2.setOnClickListener(new View.OnClickListener() {
@@ -126,6 +135,7 @@ public class ReservationFragment extends Fragment {
                 b3.setBackgroundColor(Color.BLUE);
                 new DateSelectAsyncTask(R.id.button2, dateName2).execute();
                 activeDate = dateName2;
+                selectedDate = secondDate;
             }
         });
 
@@ -138,6 +148,7 @@ public class ReservationFragment extends Fragment {
                 b3.setBackgroundColor(Color.RED);
                 new DateSelectAsyncTask(R.id.button3, dateName3).execute();
                 activeDate = dateName3;
+                selectedDate = thirdDate;
             }
         });
 
@@ -359,15 +370,17 @@ public class ReservationFragment extends Fragment {
                     statement2.setString(4, activeDate);
                     statement2.executeUpdate();
 
-                    sql = "INSERT INTO reservations (user_id, timeslot_id, location_id) VALUES (?,?,?)";
+                    sql = "INSERT INTO reservations (user_id, timeslot_id, location_id, date) VALUES (?,?,?,?)";
                 }
                 else{
-                    sql = "INSERT INTO waiting_lists (user_id, timeslot_id, location_id) VALUES (?,?,?)";
+                    sql = "INSERT INTO waiting_lists (user_id, timeslot_id, location_id, date) VALUES (?,?,?,?)";
                 }
+                java.sql.Date sqlDate = new java.sql.Date(selectedDate.getTime());
                 statement2 = connection.prepareStatement(sql);
                 statement2.setInt(1, user_id);
                 statement2.setInt(2, timeslot_id);
                 statement2.setInt(3, location);
+                statement2.setDate(4, sqlDate);
                 statement2.executeUpdate();
                 while (resultSet.next()) {
                     a.starttime = resultSet.getString("start_time");
@@ -377,7 +390,6 @@ public class ReservationFragment extends Fragment {
                     a.timeslot_id = timeslot_id;
                     //Log.i(">>>>bid ", ""+buttonID);
                 }
-                // TODO: insert into reservation table or waiting_list table
             } catch (Exception e) {
                 Log.e("USC Rec Sports", "Error during MySQL communication", e);
             }
