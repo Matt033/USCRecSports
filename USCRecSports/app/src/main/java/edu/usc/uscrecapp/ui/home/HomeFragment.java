@@ -14,6 +14,7 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
 
+import edu.usc.uscrecapp.MainActivity;
 import edu.usc.uscrecapp.R;
 import edu.usc.uscrecapp.databinding.FragmentHomeBinding;
 import edu.usc.uscrecapp.databinding.FragmentReservationBinding;
@@ -40,8 +41,10 @@ public class HomeFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 // todo: get location_id of the clicked button
-                int location_id = 2;
+                int location_id = 1;
                 int user_id = 3;
+                ((MainActivity) getActivity()).setUserId(3);
+                ((MainActivity) getActivity()).setLocationId(1);
                 // pass the location id to the reservation fragment
                 Bundle result = new Bundle();
                 result.putInt("location_id", location_id);
@@ -51,6 +54,10 @@ public class HomeFragment extends Fragment {
                 Navigation.findNavController(view).navigate(R.id.navigation_reservation);
             }
         });
+        // temporary hack to set the default user id and location id
+        // The following two lines should be removed.
+        ((MainActivity) getActivity()).setUserId(3);
+        ((MainActivity) getActivity()).setLocationId(2);
         return root;
     }
 
