@@ -44,7 +44,7 @@ CREATE TABLE `availability` (
 
 LOCK TABLES `availability` WRITE;
 /*!40000 ALTER TABLE `availability` DISABLE KEYS */;
-INSERT INTO `availability` VALUES (1,1,1,0,'MON'),(2,1,1,0,'TUE'),(3,1,1,1,'WED'),(4,1,1,0,'Thu'),(5,1,1,2,'FRI'),(6,1,1,4,'SAT'),(7,1,1,1,'SUN'),(8,1,2,1,'MON'),(9,1,2,1,'TUE'),(10,1,2,2,'WED'),(11,1,2,4,'THU'),(12,1,2,0,'FRI'),(13,1,2,0,'SAT'),(14,1,2,14,'SUN'),(15,1,3,3,'MON'),(16,1,3,0,'TUE'),(17,1,3,2,'WED'),(18,1,3,2,'THU'),(19,1,3,4,'FRI'),(20,1,3,5,'SAT'),(21,1,3,6,'SUN'),(22,1,4,0,'MON'),(23,1,4,4,'TUE'),(24,1,4,6,'WED'),(25,1,4,5,'THU'),(26,1,4,0,'FRI'),(27,1,4,2,'SAT'),(28,1,4,15,'SUN'),(29,2,1,0,'MON'),(30,2,1,0,'TUE'),(31,2,1,3,'WED'),(32,2,1,5,'THU'),(33,2,1,0,'FRI'),(34,2,1,0,'SAT'),(35,2,1,8,'SUN'),(36,2,2,0,'MON'),(37,2,2,0,'TUE'),(38,2,2,3,'WED'),(39,2,2,4,'THU'),(40,2,2,5,'FRI'),(41,2,2,0,'SAT'),(42,2,2,0,'SUN'),(43,2,3,0,'MON'),(44,2,3,0,'TUE'),(45,2,3,2,'WED'),(46,2,3,6,'THU'),(47,2,3,7,'FRI'),(48,2,3,5,'SAT'),(49,2,3,0,'SUN'),(50,2,4,0,'MON'),(51,2,4,0,'TUE'),(52,2,4,2,'WED'),(53,2,4,2,'THU'),(54,2,4,0,'FRI'),(55,2,4,4,'SAT'),(56,2,4,0,'SUN');
+INSERT INTO `availability` VALUES (1,1,1,0,'MON'),(2,1,1,0,'TUE'),(3,1,1,0,'WED'),(4,1,1,0,'Thu'),(5,1,1,2,'FRI'),(6,1,1,4,'SAT'),(7,1,1,1,'SUN'),(8,1,2,1,'MON'),(9,1,2,1,'TUE'),(10,1,2,1,'WED'),(11,1,2,4,'THU'),(12,1,2,0,'FRI'),(13,1,2,0,'SAT'),(14,1,2,14,'SUN'),(15,1,3,3,'MON'),(16,1,3,0,'TUE'),(17,1,3,2,'WED'),(18,1,3,2,'THU'),(19,1,3,4,'FRI'),(20,1,3,5,'SAT'),(21,1,3,6,'SUN'),(22,1,4,0,'MON'),(23,1,4,4,'TUE'),(24,1,4,6,'WED'),(25,1,4,5,'THU'),(26,1,4,0,'FRI'),(27,1,4,2,'SAT'),(28,1,4,15,'SUN'),(29,2,1,0,'MON'),(30,2,1,0,'TUE'),(31,2,1,3,'WED'),(32,2,1,5,'THU'),(33,2,1,0,'FRI'),(34,2,1,0,'SAT'),(35,2,1,8,'SUN'),(36,2,2,0,'MON'),(37,2,2,0,'TUE'),(38,2,2,3,'WED'),(39,2,2,4,'THU'),(40,2,2,5,'FRI'),(41,2,2,0,'SAT'),(42,2,2,0,'SUN'),(43,2,3,0,'MON'),(44,2,3,0,'TUE'),(45,2,3,2,'WED'),(46,2,3,6,'THU'),(47,2,3,7,'FRI'),(48,2,3,5,'SAT'),(49,2,3,0,'SUN'),(50,2,4,0,'MON'),(51,2,4,0,'TUE'),(52,2,4,2,'WED'),(53,2,4,2,'THU'),(54,2,4,0,'FRI'),(55,2,4,4,'SAT'),(56,2,4,0,'SUN');
 /*!40000 ALTER TABLE `availability` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -85,14 +85,17 @@ CREATE TABLE `reservations` (
   `timeslot_id` int DEFAULT NULL,
   `location_id` int DEFAULT NULL,
   `date` date DEFAULT NULL,
+  `availability_id` int DEFAULT NULL,
   PRIMARY KEY (`reservation_id`),
   KEY `timeslot_id_idx` (`timeslot_id`),
   KEY `location_id_f_idx` (`location_id`),
   KEY `user_id` (`user_id`),
+  KEY `availability_id_fx_idx` (`availability_id`),
+  CONSTRAINT `availability_id_fx2` FOREIGN KEY (`availability_id`) REFERENCES `availability` (`availability_id`),
   CONSTRAINT `location_id_f` FOREIGN KEY (`location_id`) REFERENCES `recreation_facilities` (`location_id`),
   CONSTRAINT `timeslot_id` FOREIGN KEY (`timeslot_id`) REFERENCES `timeslots` (`timeslot_id`),
   CONSTRAINT `user_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -101,7 +104,7 @@ CREATE TABLE `reservations` (
 
 LOCK TABLES `reservations` WRITE;
 /*!40000 ALTER TABLE `reservations` DISABLE KEYS */;
-INSERT INTO `reservations` VALUES (3,3,1,1,'2022-03-22'),(4,3,1,1,'2022-03-22'),(5,3,2,1,'2022-03-22'),(6,3,2,1,'2022-03-23');
+INSERT INTO `reservations` VALUES (7,3,1,1,'2022-03-23',3),(8,3,2,1,'2022-03-23',10);
 /*!40000 ALTER TABLE `reservations` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -170,14 +173,17 @@ CREATE TABLE `waiting_lists` (
   `timeslot_id` int DEFAULT NULL,
   `location_id` int DEFAULT NULL,
   `date` date DEFAULT NULL,
+  `availability_id` int DEFAULT NULL,
   PRIMARY KEY (`waiting_list_id`),
   KEY `user_id_f_idx` (`user_id`),
   KEY `timeslot_id_f_idx` (`timeslot_id`) /*!80000 INVISIBLE */,
   KEY `location_id_w_idx` (`location_id`),
+  KEY `availability_id_fx_idx` (`availability_id`),
+  CONSTRAINT `availability_id_fx` FOREIGN KEY (`availability_id`) REFERENCES `availability` (`availability_id`),
   CONSTRAINT `location_id_w` FOREIGN KEY (`location_id`) REFERENCES `recreation_facilities` (`location_id`),
   CONSTRAINT `timeslot_id_f` FOREIGN KEY (`timeslot_id`) REFERENCES `timeslots` (`timeslot_id`),
   CONSTRAINT `user_id_f` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -186,7 +192,7 @@ CREATE TABLE `waiting_lists` (
 
 LOCK TABLES `waiting_lists` WRITE;
 /*!40000 ALTER TABLE `waiting_lists` DISABLE KEYS */;
-INSERT INTO `waiting_lists` VALUES (5,3,1,1,'2022-03-22');
+INSERT INTO `waiting_lists` VALUES (6,3,1,1,'2022-03-23',3);
 /*!40000 ALTER TABLE `waiting_lists` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -199,4 +205,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2022-03-22 22:14:30
+-- Dump completed on 2022-03-23 23:02:34
