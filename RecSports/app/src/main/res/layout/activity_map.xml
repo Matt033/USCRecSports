@@ -5,47 +5,83 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MapActivity"
-    android:background="@drawable/uscmap"
     >
 
+    <TextView
+        android:layout_height="60dp"
+        android:layout_width="180dp"
+        android:translationX="20dp"
+        android:translationY="45dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:text="Please select the location of your chosen recreation facility:"
+        android:textAlignment="center"
+        >
 
-    <TextView
-        android:id="@+id/lyonCenter"
-        android:layout_width="132dp"
-        android:layout_height="59dp"
-        android:text="Lyon Center"
-        android:background="@color/white"
-        tools:layout_editor_absoluteX="107dp"
-        tools:layout_editor_absoluteY="122dp"
-        android:onClick="showLyonCenter"
-        />
 
-    <TextView
-        android:id="@+id/textView2"
-        android:layout_width="146dp"
-        android:layout_height="76dp"
-        android:text="Cromwell Track"
-        android:background="@color/white"
-        tools:layout_editor_absoluteX="136dp"
-        tools:layout_editor_absoluteY="226dp"
-        android:onClick="showCromwellTrack"/>
+    </TextView>
 
-    <TextView
-        android:id="@+id/textView3"
-        android:layout_width="165dp"
-        android:layout_height="81dp"
-        android:text="USC Village Fitness Center"
-        android:onClick="showVillage"
-        android:background="@color/white"
-        tools:layout_editor_absoluteX="126dp"
-        tools:layout_editor_absoluteY="358dp" />
-    <TextView
-        android:id="@+id/textView4"
-        android:layout_width="165dp"
-        android:layout_height="81dp"
+    <Button
+        android:id="@+id/Summary"
+        android:layout_width="110dp"
+        android:layout_height="65dp"
+        android:backgroundTint="@color/black"
         android:text="User Profile Page"
-        android:onClick="showUserProfile"
-        android:background="@color/white"
-        tools:layout_editor_absoluteX="126dp"
-        tools:layout_editor_absoluteY="458dp" />
+        android:textSize="10dp"
+        android:translationX="270dp"
+        android:translationY="35dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+    <ImageView
+        android:id="@+id/imageView2"
+        android:layout_width="match_parent"
+        android:layout_height="360dp"
+        android:src="@drawable/uscmap2"
+        android:translationY="152dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+    </ImageView>
+    <Button
+        android:id="@+id/Cromwell"
+        android:layout_width="95dp"
+        android:layout_height="50dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:backgroundTint="@color/black"
+        android:text="Cromwell Track"
+        android:textSize="10dp"
+        android:translationX="50dp"
+        android:translationY="390dp" />
+
+    <Button
+        android:id="@+id/lyonCenter"
+        android:layout_width="75dp"
+        android:layout_height="50dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:backgroundTint="@color/black"
+        android:text="Lyon Center"
+        android:textSize="10dp"
+        android:translationX="50dp"
+        android:translationY="270dp"
+        tools:layout_editor_absoluteX="0dp"
+        tools:layout_editor_absoluteY="-26dp" />
+
+    <Button
+        android:id="@+id/Village"
+        android:layout_width="105dp"
+        android:layout_height="40dp"
+        android:layout_marginBottom="254dp"
+        android:backgroundTint="@color/black"
+        android:text="Village Gym"
+        android:textSize="10dp"
+        android:translationX="210dp"
+        android:translationY="140dp"
+        app:layout_constraintBottom_toBottomOf="@+id/imageView2"
+        app:layout_constraintStart_toStartOf="parent" />
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -27,6 +27,12 @@ import com.example.uscrecsports.ui.login.LoginViewModel;
 import com.example.uscrecsports.ui.login.LoginViewModelFactory;
 import com.example.uscrecsports.databinding.ActivityLoginBinding;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.*;
+
 public class LoginActivity extends AppCompatActivity {
 
     private LoginViewModel loginViewModel;
@@ -34,6 +40,7 @@ public class LoginActivity extends AppCompatActivity {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        System.out.println("Created!");
         super.onCreate(savedInstanceState);
 
         binding = ActivityLoginBinding.inflate(getLayoutInflater());
@@ -46,8 +53,10 @@ public class LoginActivity extends AppCompatActivity {
         final EditText passwordEditText = binding.password;
         final Button loginButton = binding.login;
         final ProgressBar loadingProgressBar = binding.loading;
+        usernameEditText.setText("Hello");
+        passwordEditText.setText("World");
 
-        loginViewModel.getLoginFormState().observe(this, new Observer<LoginFormState>() {
+        /*loginViewModel.getLoginFormState().observe(this, new Observer<LoginFormState>() {
             @Override
             public void onChanged(@Nullable LoginFormState loginFormState) {
                 if (loginFormState == null) {
@@ -112,14 +121,57 @@ public class LoginActivity extends AppCompatActivity {
                 }
                 return false;
             }
-        });
+        });*/
 
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                loadingProgressBar.setVisibility(View.VISIBLE);
-                loginViewModel.login(usernameEditText.getText().toString(),
-                        passwordEditText.getText().toString());
+                System.out.println("Clicked!");
+                usernameEditText.setText("Clicked!");
+                passwordEditText.setText("World");
+                String username = usernameEditText.getText().toString();
+                String password = passwordEditText.getText().toString();
+
+                Connection connection = null;
+                try {
+                    try {
+                        Class.forName("com.mysql.cj.jdbc.Driver");
+                        connection = DriverManager.getConnection("jdbc:mysql://10.0.2.2:3306/uscrecsports?user=root&password=Barkley2001$");
+                    } catch (ClassNotFoundException e) {
+                        e.printStackTrace();
+                    }
+
+                    String sql = "SELECT * FROM users WHERE username = '"+username+"' AND password = '"+password+"'";
+                    PreparedStatement ps = connection.prepareStatement(sql);
+                    ResultSet rs = ps.executeQuery();
+                    if(rs.next()){
+                        System.out.println("Valid Creds!");
+                        int userID = rs.getInt("user_id");
+                        Bundle result = new Bundle();
+                        result.putInt("user_id", userID);
+                        usernameEditText.setText("");
+                        passwordEditText.setText("");
+//                        getParentFragmentManager().setFragmentResult("");
+//                        Navigation.findNavController(view).navigate(R.id.navigation_reservation);
+                    }
+                    else{
+                        System.out.println("Invalid Creds!");
+                        TextView response = (TextView) findViewById(R.id.Feedback);
+                        response.setText("Invalid Login. Please enter in a new login");
+                        usernameEditText.setText("");
+                        passwordEditText.setText("");
+                    }
+                } catch (SQLException throwables) {
+                    throwables.printStackTrace();
+                }
+
+
+
+
+
+//                loadingProgressBar.setVisibility(View.VISIBLE);
+//                loginViewModel.login(usernameEditText.getText().toString(),
+//                        passwordEditText.getText().toString());
             }
         });
     }
