@@ -29,7 +29,10 @@ public class NotificationsFragment extends Fragment {
     private FragmentNotificationsBinding binding;
     private static final String URL = "jdbc:mysql://10.0.2.2:3306/uscrecsports";
     private static final String USER = "root";
+
     private static final String PASSWORD = "root";
+    //private static final String PASSWORD = "Matthewwilson033!";
+
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -46,7 +49,6 @@ public class NotificationsFragment extends Fragment {
         TextView currentRes = root.findViewById(R.id.textView1);
         currentRes.setText("Current Reservations");
         new InfoAsyncTask().execute();
-//
         return root;
     }
 
@@ -79,6 +81,7 @@ public class NotificationsFragment extends Fragment {
                     Date date = resultSet.getDate("date");
                     dates.add(date);
                 }
+              
                 for(int i = 0; i < timeslots.size(); i++){
                     Log.d("TIMESLOT", timeslots.get(i) );
                 }
