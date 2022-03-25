@@ -1,24 +1,25 @@
-package edu.usc.uscrecapp.ui.home;
 
-import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.TextView;
+        package edu.usc.uscrecapp.ui.home;
 
-import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
-import androidx.lifecycle.ViewModelProvider;
-import androidx.navigation.Navigation;
+        import android.os.Bundle;
+        import android.view.LayoutInflater;
+        import android.view.View;
+        import android.view.ViewGroup;
+        import android.widget.Button;
+        import android.widget.TextView;
 
-import edu.usc.uscrecapp.MainActivity;
-import edu.usc.uscrecapp.R;
-import edu.usc.uscrecapp.databinding.FragmentHomeBinding;
-import edu.usc.uscrecapp.databinding.FragmentReservationBinding;
-import edu.usc.uscrecapp.ui.reservation.ReservationFragment;
+        import androidx.annotation.NonNull;
+        import androidx.fragment.app.Fragment;
+        import androidx.fragment.app.FragmentManager;
+        import androidx.fragment.app.FragmentTransaction;
+        import androidx.lifecycle.ViewModelProvider;
+        import androidx.navigation.Navigation;
+
+        import edu.usc.uscrecapp.MainActivity;
+        import edu.usc.uscrecapp.R;
+        import edu.usc.uscrecapp.databinding.FragmentHomeBinding;
+        import edu.usc.uscrecapp.databinding.FragmentReservationBinding;
+        import edu.usc.uscrecapp.ui.reservation.ReservationFragment;
 
 public class HomeFragment extends Fragment {
 
@@ -36,7 +37,7 @@ public class HomeFragment extends Fragment {
         final TextView textView = binding.textHome;
         homeViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
 
-        Button b_lyon_center = root.findViewById(R.id.lyon_center);
+        Button b_lyon_center = root.findViewById(R.id.lyonCenter);
         b_lyon_center.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
