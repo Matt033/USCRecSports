@@ -29,7 +29,10 @@ public class NotificationsFragment extends Fragment {
     private FragmentNotificationsBinding binding;
     private static final String URL = "jdbc:mysql://10.0.2.2:3306/uscrecsports";
     private static final String USER = "root";
-    private static final String PASSWORD = "Matthewwilson033!";
+
+    private static final String PASSWORD = "root";
+    //private static final String PASSWORD = "Matthewwilson033!";
+
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -46,7 +49,6 @@ public class NotificationsFragment extends Fragment {
         TextView currentRes = root.findViewById(R.id.textView1);
         currentRes.setText("Current Reservations");
         new InfoAsyncTask().execute();
-//
         return root;
     }
 
@@ -56,7 +58,7 @@ public class NotificationsFragment extends Fragment {
             Log.d("ASYNCTASK", "ASYNCTASK is now being run");
             Vector<Reservation> current_reservations = new Vector<Reservation>();
             try{
-                Class.forName("com.mysql.cj.jdbc.Driver");
+                //Class.forName("com.mysql.cj.jdbc.Driver");
                 Log.d("TRY", "Inside of TRY method!");
                 Connection connection = DriverManager.getConnection(URL, USER, PASSWORD);
                 Log.d("AFTER", "Inside of AFTER method! YOU HAVE CONQUERED!!!");
@@ -78,6 +80,10 @@ public class NotificationsFragment extends Fragment {
                     reservation_ids.add(reservation_id);
                     Date date = resultSet.getDate("date");
                     dates.add(date);
+                }
+              
+                for(int i = 0; i < timeslots.size(); i++){
+                    Log.d("TIMESLOT", timeslots.get(i) );
                 }
 
                 for(int i = 0; i < timeslots.size(); i++){

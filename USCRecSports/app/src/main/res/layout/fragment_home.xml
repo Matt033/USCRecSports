@@ -4,8 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.home.HomeFragment">
-
+    tools:context=".ui.home.HomeFragment"
+    >
     <TextView
         android:id="@+id/text_home"
         android:layout_width="match_parent"
@@ -20,11 +20,81 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <TextView
+        android:layout_height="60dp"
+        android:layout_width="180dp"
+        android:translationX="20dp"
+        android:translationY="45dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:text="Please select the location of your chosen recreation facility:"
+        android:textAlignment="center"
+        >
+
+
+    </TextView>
+
     <Button
-        android:id="@+id/lyon_center"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:id="@+id/Summary"
+        android:layout_width="110dp"
+        android:layout_height="65dp"
+        android:backgroundTint="@color/black"
+        android:text="User Profile Page"
+        android:textSize="10dp"
+        android:translationX="270dp"
+        android:translationY="35dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+    <ImageView
+        android:id="@+id/imageView2"
+        android:layout_width="match_parent"
+        android:layout_height="360dp"
+        android:src="@drawable/uscmap2"
+        android:translationY="152dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+    </ImageView>
+    <Button
+        android:id="@+id/Cromwell"
+        android:layout_width="95dp"
+        android:layout_height="50dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:backgroundTint="@color/black"
+        android:text="Cromwell Track"
+        android:textSize="10dp"
+        android:translationX="50dp"
+        android:translationY="390dp" />
+
+    <Button
+        android:id="@+id/lyonCenter"
+        android:layout_width="75dp"
+        android:layout_height="50dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:backgroundTint="@color/black"
         android:text="Lyon Center"
-        tools:layout_editor_absoluteX="150dp"
-        tools:layout_editor_absoluteY="466dp" />
+        android:textSize="10dp"
+        android:translationX="50dp"
+        android:translationY="270dp"
+        tools:layout_editor_absoluteX="0dp"
+        tools:layout_editor_absoluteY="-26dp" />
+
+    <Button
+        android:id="@+id/Village"
+        android:layout_width="105dp"
+        android:layout_height="40dp"
+        android:layout_marginBottom="254dp"
+        android:backgroundTint="@color/black"
+        android:text="Village Gym"
+        android:textSize="10dp"
+        android:translationX="210dp"
+        android:translationY="140dp"
+        app:layout_constraintBottom_toBottomOf="@+id/imageView2"
+        app:layout_constraintStart_toStartOf="parent" />
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>
