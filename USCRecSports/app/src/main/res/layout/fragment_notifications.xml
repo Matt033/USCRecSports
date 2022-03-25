@@ -41,6 +41,44 @@
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/upcoming_layout"
+            android:orientation="horizontal"
+            android:layout_marginStart="0dp"
+            android:layout_marginTop="100dp">
+
+            <TextView
+                android:layout_width="400dp"
+                android:layout_height="67dp"
+                android:layout_marginStart="0dp"
+                android:layout_marginTop="10dp"
+                android:text="Reservation at Lyon Center"></TextView>
+            <Button
+                android:layout_width="95dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="300dp"
+                android:layout_marginTop="0dp"
+                android:text="Cancel">
+
+            </Button>
+            <TextView
+                android:layout_width="400dp"
+                android:layout_height="67dp"
+                android:text="Reservation at Leavey"
+                android:layout_marginStart="0dp"
+                android:layout_marginTop="60dp">
+            </TextView>
+            <Button
+                android:layout_width="95dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="300dp"
+                android:layout_marginTop="50dp"
+                android:text="Cancel">
+            </Button>
+        </RelativeLayout>
+
         <TextView
             android:id="@+id/textView2"
             android:layout_width="400dp"
@@ -51,6 +89,23 @@
             android:textSize="24sp"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
+
+        <RelativeLayout
+            android:id="@+id/previous_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="0dp"
+            android:layout_marginTop="50dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="400dp"
+                android:layout_height="67dp"
+                android:layout_marginStart="0dp"
+                android:layout_marginTop="400dp"
+                android:text="Reservation at Cromwell"></TextView>
+        </RelativeLayout>
+
     </RelativeLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
