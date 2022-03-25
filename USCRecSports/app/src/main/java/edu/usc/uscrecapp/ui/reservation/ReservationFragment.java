@@ -361,6 +361,15 @@ public class ReservationFragment extends Fragment {
                 PreparedStatement statement = connection.prepareStatement(sql);
                 ResultSet resultSet = statement.executeQuery();
                 PreparedStatement statement2;
+                sql = "SELECT availability_id FROM availability WHERE location_id= ? AND timeslot_id=? AND date=?";
+                statement2 = connection.prepareStatement(sql);
+                statement2.setInt(1, location);
+                statement2.setInt(2, timeslot_id);
+                statement2.setString(3, activeDate);
+                ResultSet resultSet3 = statement2.executeQuery();
+                resultSet3.next();
+                int availability_id = resultSet3.getInt("availability_id");
+                Log.i("availid", "" + availability_id);
                 if(res) {
                     sql = "UPDATE availability SET slots_available= ? WHERE location_id= ? AND timeslot_id=? AND date=?";
                     statement2 = connection.prepareStatement(sql);
@@ -369,11 +378,10 @@ public class ReservationFragment extends Fragment {
                     statement2.setInt(3, timeslot_id);
                     statement2.setString(4, activeDate);
                     statement2.executeUpdate();
-
-                    sql = "INSERT INTO reservations (user_id, timeslot_id, location_id, date) VALUES (?,?,?,?)";
+                    sql = "INSERT INTO reservations (user_id, timeslot_id, location_id, date, availability_id) VALUES (?,?,?,?,?)";
                 }
                 else{
-                    sql = "INSERT INTO waiting_lists (user_id, timeslot_id, location_id, date) VALUES (?,?,?,?)";
+                    sql = "INSERT INTO waiting_lists (user_id, timeslot_id, location_id, date, availability_id) VALUES (?,?,?,?,?)";
                 }
                 java.sql.Date sqlDate = new java.sql.Date(selectedDate.getTime());
                 statement2 = connection.prepareStatement(sql);
@@ -381,6 +389,7 @@ public class ReservationFragment extends Fragment {
                 statement2.setInt(2, timeslot_id);
                 statement2.setInt(3, location);
                 statement2.setDate(4, sqlDate);
+                statement2.setInt(5, availability_id);
                 statement2.executeUpdate();
                 while (resultSet.next()) {
                     a.starttime = resultSet.getString("start_time");
