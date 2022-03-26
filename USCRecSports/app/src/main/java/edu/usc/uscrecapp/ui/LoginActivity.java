@@ -21,6 +21,7 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
+import androidx.navigation.Navigation;
 
 import edu.usc.uscrecapp.R;
 
@@ -31,6 +32,10 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.*;
 
+import edu.usc.uscrecapp.R;
+import edu.usc.uscrecapp.databinding.FragmentHomeBinding;
+import edu.usc.uscrecapp.databinding.FragmentReservationBinding;
+
 import edu.usc.uscrecapp.databinding.FragmentNotificationsBinding;
 
 public class LoginActivity extends AppCompatActivity {
@@ -40,11 +45,11 @@ public class LoginActivity extends AppCompatActivity {
     public void onCreate(Bundle savedInstanceState) {
         System.out.println("Created!");
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_login);
 
         final EditText usernameEditText = (EditText) findViewById(R.id.username);
         final EditText passwordEditText = (EditText) findViewById(R.id.password);
         final Button loginButton = (Button) findViewById(R.id.login);
-        TextView response = (TextView) findViewById(R.id.Feedback);
         usernameEditText.setText("Hello");
         passwordEditText.setText("World");
 
@@ -77,8 +82,10 @@ public class LoginActivity extends AppCompatActivity {
                         result.putInt("user_id", userID);
                         usernameEditText.setText("");
                         passwordEditText.setText("");
-//                        getParentFragmentManager().setFragmentResult("");
-//                        Navigation.findNavController(view).navigate(R.id.navigation_reservation);
+
+                      getSupportFragmentManager().setFragmentResult("requestKey", result);
+//                      // now switch to reservation fragment page
+                      Navigation.findNavController(v).navigate(R.id.navigation_home);
                     } else {
                         System.out.println("Invalid Creds!");
                         TextView response = (TextView) findViewById(R.id.Feedback);
