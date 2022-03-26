@@ -49,34 +49,7 @@
             android:layout_marginStart="0dp"
             android:layout_marginTop="100dp">
 
-            <TextView
-                android:layout_width="400dp"
-                android:layout_height="67dp"
-                android:layout_marginStart="0dp"
-                android:layout_marginTop="10dp"
-                android:text="Reservation at Lyon Center"></TextView>
-            <Button
-                android:layout_width="95dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="300dp"
-                android:layout_marginTop="0dp"
-                android:text="Cancel">
 
-            </Button>
-            <TextView
-                android:layout_width="400dp"
-                android:layout_height="67dp"
-                android:text="Reservation at Leavey"
-                android:layout_marginStart="0dp"
-                android:layout_marginTop="60dp">
-            </TextView>
-            <Button
-                android:layout_width="95dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="300dp"
-                android:layout_marginTop="50dp"
-                android:text="Cancel">
-            </Button>
         </RelativeLayout>
 
         <TextView

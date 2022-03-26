@@ -67,6 +67,7 @@ public class NotificationsFragment extends Fragment {
                 String user_id = "3";
                 //To get current and future reservations need to order by dates >= to today's date
                 String sql = "SELECT * FROM reservations WHERE user_id=" + user_id + " AND DATE(reservations.date) >= DATE(NOW());";
+               // String sql = "SELECT * FROM reservations WHERE user_id = " + user_id;
                 PreparedStatement statement = connection.prepareStatement(sql);
                 ResultSet resultSet = statement.executeQuery();
                 while(resultSet.next()){
@@ -79,9 +80,9 @@ public class NotificationsFragment extends Fragment {
                     Date date = resultSet.getDate("date");
                     dates.add(date);
                 }
-                for(int i = 0; i < timeslots.size(); i++){
-                    Log.d("TIMESLOT", timeslots.get(i) );
-                }
+
+
+
 
                 for(int i = 0; i < timeslots.size(); i++){
                     String sql2 = "SELECT * FROM timeslots WHERE timeslot_id=" + timeslots.get(i);
@@ -108,7 +109,7 @@ public class NotificationsFragment extends Fragment {
 
                 //get previous reservations
                 //limits to only 10 reservations
-                String prevSql = "SELECT * FROM reservations WHERE user_id = " + user_id + " AND DATE(reservations.date) >= DATE(NOW());";
+                String prevSql = "SELECT * FROM reservations WHERE user_id = " + user_id + " AND DATE(reservations.date) <= DATE(NOW());";
                 PreparedStatement prepPrev = connection.prepareStatement(prevSql);
                 ResultSet prevResult = prepPrev.executeQuery();
                 Vector<Integer> timeslotsPrev = new Vector<Integer>();
@@ -116,15 +117,17 @@ public class NotificationsFragment extends Fragment {
                 Vector<Integer> reservationsPrev = new Vector<Integer>();
                 Vector<Date> datesPrev = new Vector<Date>();
                 while(prevResult.next()){
-                    int timeslot = resultSet.getInt("timeslot_id");
+                    int timeslot = prevResult.getInt("timeslot_id");
+                    System.out.println(timeslot);
                     timeslotsPrev.add(timeslot);
-                    int location = resultSet.getInt("location_id");
+                    int location = prevResult.getInt("location_id");
                     locationsPrev.add(location);
-                    int reservation_id = resultSet.getInt("reservation_id");
+                    int reservation_id = prevResult.getInt("reservation_id");
                     reservationsPrev.add(reservation_id);
-                    Date date = resultSet.getDate("date");
+                    Date date = prevResult.getDate("date");
                     datesPrev.add(date);
                 }
+
 
                 for(int i = 0; i < timeslotsPrev.size(); i++){
                     String sql4 = "SELECT * FROM timeslots WHERE timeslot_id=" + timeslotsPrev.get(i);
@@ -155,6 +158,7 @@ public class NotificationsFragment extends Fragment {
         }
         @Override
         protected void onPostExecute(Vector<Reservation> result){
+            Log.d("POSTEXECUTE", "iN POST EXECUTE FUNCTION");
             View root = binding.getRoot();
             int upcomingMargin = 10;
             int previousMargin = 400;
