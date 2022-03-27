@@ -1,6 +1,7 @@
 
         package edu.usc.uscrecapp.ui.home;
 
+        import android.content.Intent;
         import android.os.Bundle;
         import android.view.LayoutInflater;
         import android.view.View;
@@ -28,6 +29,7 @@ public class HomeFragment extends Fragment {
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
+
         HomeViewModel homeViewModel =
                 new ViewModelProvider(this).get(HomeViewModel.class);
 
@@ -36,6 +38,8 @@ public class HomeFragment extends Fragment {
 
         final TextView textView = binding.textHome;
         homeViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
+
+
 
         Button b_lyon_center = root.findViewById(R.id.lyonCenter);
         b_lyon_center.setOnClickListener(new View.OnClickListener() {

@@ -18,7 +18,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="96dp"
-        android:hint="Email"
+        android:hint="Username"
         android:inputType="textEmailAddress"
         android:selectAllOnFocus="true"
         app:layout_constraintEnd_toEndOf="parent"
@@ -80,7 +80,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text=""
-        tools:layout_editor_absoluteX="192dp"
-        tools:layout_editor_absoluteY="216dp" />
+        android:translationX="60dp"
+        android:translationY="225dp"
+         />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
