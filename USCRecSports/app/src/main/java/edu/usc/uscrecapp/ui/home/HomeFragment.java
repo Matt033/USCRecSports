@@ -1,6 +1,7 @@
 
         package edu.usc.uscrecapp.ui.home;
 
+        import android.content.Intent;
         import android.os.Bundle;
         import android.view.LayoutInflater;
         import android.view.View;
@@ -28,6 +29,7 @@ public class HomeFragment extends Fragment {
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
+
         HomeViewModel homeViewModel =
                 new ViewModelProvider(this).get(HomeViewModel.class);
 
@@ -36,6 +38,8 @@ public class HomeFragment extends Fragment {
 
         final TextView textView = binding.textHome;
         homeViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
+
+
 
         Button b_lyon_center = root.findViewById(R.id.lyonCenter);
         b_lyon_center.setOnClickListener(new View.OnClickListener() {
@@ -55,6 +59,61 @@ public class HomeFragment extends Fragment {
                 Navigation.findNavController(view).navigate(R.id.navigation_reservation);
             }
         });
+
+        Button b_village = root.findViewById(R.id.Village);
+        b_village.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // todo: get location_id of the clicked button
+                int location_id = 2;
+                int user_id = 3;
+                ((MainActivity) getActivity()).setUserId(3);
+                ((MainActivity) getActivity()).setLocationId(1);
+                // pass the location id to the reservation fragment
+                Bundle result = new Bundle();
+                result.putInt("location_id", location_id);
+                result.putInt("user_id", user_id);
+                getParentFragmentManager().setFragmentResult("requestKey", result);
+                // now switch to reservation fragment page
+                Navigation.findNavController(view).navigate(R.id.navigation_reservation);
+            }
+        });
+
+        Button b_cromwell = root.findViewById(R.id.Cromwell);
+        b_cromwell.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // todo: get location_id of the clicked button
+                int location_id = 2;
+                int user_id = 3;
+                ((MainActivity) getActivity()).setUserId(3);
+                ((MainActivity) getActivity()).setLocationId(1);
+                // pass the location id to the reservation fragment
+                Bundle result = new Bundle();
+                result.putInt("location_id", location_id);
+                result.putInt("user_id", user_id);
+                getParentFragmentManager().setFragmentResult("requestKey", result);
+                // now switch to reservation fragment page
+                Navigation.findNavController(view).navigate(R.id.navigation_reservation);
+            }
+        });
+        Button b_summary = root.findViewById(R.id.Summary);
+        b_summary.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // todo: get location_id of the clicked button
+                int user_id = 3;
+                ((MainActivity) getActivity()).setUserId(3);
+                // pass the location id to the reservation fragment
+                Bundle result = new Bundle();
+                result.putInt("user_id", user_id);
+                getParentFragmentManager().setFragmentResult("requestKey", result);
+                // now switch to reservation fragment page
+                Navigation.findNavController(view).navigate(R.id.navigation_notifications);
+            }
+        });
+
+
         // temporary hack to set the default user id and location id
         // The following two lines should be removed.
         ((MainActivity) getActivity()).setUserId(3);

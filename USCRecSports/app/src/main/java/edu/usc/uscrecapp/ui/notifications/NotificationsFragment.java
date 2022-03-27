@@ -81,10 +81,11 @@ public class NotificationsFragment extends Fragment {
                     Date date = resultSet.getDate("date");
                     dates.add(date);
                 }
-              
-                for(int i = 0; i < timeslots.size(); i++){
-                    Log.d("TIMESLOT", timeslots.get(i) );
-                }
+
+//                for(int i = 0; i < timeslots.size(); i++){
+//                    Log.d("TIMESLOT", timeslots.get(i) );
+//                }
+
 
                 for(int i = 0; i < timeslots.size(); i++){
                     String sql2 = "SELECT * FROM timeslots WHERE timeslot_id=" + timeslots.get(i);
