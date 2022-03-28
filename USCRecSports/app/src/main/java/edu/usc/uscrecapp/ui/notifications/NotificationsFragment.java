@@ -296,9 +296,11 @@ public class NotificationsFragment extends Fragment {
             try{
                 //removes reservation for user
                 Connection connection = DriverManager.getConnection(URL, USER, PASSWORD);
+                Statement stmt = connection.createStatement();
                 String sql = "DELETE FROM reservations WHERE reservation_id=" + reservation_id;
-                PreparedStatement statement = connection.prepareStatement(sql);
-                ResultSet result = statement.executeQuery();
+                //PreparedStatement statement = connection.prepareStatement(sql);
+                stmt.executeUpdate(sql);
+                //ResultSet result = statement.executeQuery();
 
                 //each reservation is going to have to be associated with an availability id
                 String sql2 = "SELECT * FROM availability WHERE availability_id=" + availability_id;
@@ -312,9 +314,11 @@ public class NotificationsFragment extends Fragment {
                     //waiting list should only be maintained for current and future dates
                 }
                 currSpots++;
+                Statement stmt2 = connection.createStatement();
                 String sql3 = "UPDATE availability SET slots_available="+ currSpots + " WHERE availability_id=" + availability_id;
-                PreparedStatement statement3 = connection.prepareStatement(sql3);
-                ResultSet result3 = statement3.executeQuery();
+                //PreparedStatement statement3 = connection.prepareStatement(sql3);
+                //ResultSet result3 = statement3.executeQuery();
+                stmt2.executeUpdate(sql3);
 
             } catch (Exception e) {
                 Log.e("USC Rec Sports", "Error during MySQL communication", e);
