@@ -39,6 +39,7 @@ public class HomeFragment extends Fragment {
         final TextView textView = binding.textHome;
         homeViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
 
+        int userID = ((MainActivity) getActivity()).getUserId();
 
 
         Button b_lyon_center = root.findViewById(R.id.lyonCenter);
@@ -51,6 +52,7 @@ public class HomeFragment extends Fragment {
                 // pass the location id to the reservation fragment
                 Bundle result = new Bundle();
                 result.putInt("location_id", location_id);
+                result.putInt("user_id", userID);
                 getParentFragmentManager().setFragmentResult("requestKey", result);
                 // now switch to reservation fragment page
                 Navigation.findNavController(view).navigate(R.id.navigation_reservation);
@@ -67,6 +69,7 @@ public class HomeFragment extends Fragment {
                 // pass the location id to the reservation fragment
                 Bundle result = new Bundle();
                 result.putInt("location_id", location_id);
+                result.putInt("user_id", userID);
                 getParentFragmentManager().setFragmentResult("requestKey", result);
                 // now switch to reservation fragment page
                 Navigation.findNavController(view).navigate(R.id.navigation_reservation);
@@ -83,6 +86,7 @@ public class HomeFragment extends Fragment {
                 // pass the location id to the reservation fragment
                 Bundle result = new Bundle();
                 result.putInt("location_id", location_id);
+                result.putInt("user_id", userID);
                 getParentFragmentManager().setFragmentResult("requestKey", result);
                 // now switch to reservation fragment page
                 Navigation.findNavController(view).navigate(R.id.navigation_reservation);
