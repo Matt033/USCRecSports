@@ -81,7 +81,8 @@ public class NotificationsFragment extends Fragment {
                     availabilities.add(availability_id);
                 }
 
-
+                //gets actual timeslots and physical locations
+                //orders into reservation class
                 for(int i = 0; i < timeslots.size(); i++){
                     String sql2 = "SELECT * FROM timeslots WHERE timeslot_id=" + timeslots.get(i);
                     String sql3 = "SELECT location_name FROM recreation_facilities WHERE location_id=" + locations.get(i);
@@ -107,7 +108,7 @@ public class NotificationsFragment extends Fragment {
 
                 //get previous reservations
                 //limits to only 10 reservations
-                String prevSql = "SELECT * FROM reservations WHERE user_id = " + user_id + " AND DATE(reservations.date) < DATE(NOW());";
+                String prevSql = "SELECT * FROM reservations WHERE user_id = " + user_id + " AND DATE(reservations.date) < DATE(NOW()) LIMIT 10;";
                 PreparedStatement prepPrev = connection.prepareStatement(prevSql);
                 ResultSet prevResult = prepPrev.executeQuery();
                 Vector<Integer> timeslotsPrev = new Vector<Integer>();
@@ -127,7 +128,7 @@ public class NotificationsFragment extends Fragment {
                     int availability_id = prevResult.getInt("availability_id");
                     availPrev.add(availability_id);
                 }
-
+                //gets the timeslots of the previous reservations
                 for(int i = 0; i < timeslotsPrev.size(); i++){
                     String sql4 = "SELECT * FROM timeslots WHERE timeslot_id=" + timeslotsPrev.get(i);
                     String sql5 = "SELECT location_name FROM recreation_facilities WHERE location_id=" + locationsPrev.get(i);
@@ -148,6 +149,56 @@ public class NotificationsFragment extends Fragment {
                     Reservation res = new Reservation(start_time, end_time, location, reservationsPrev.get(i), datesPrev.get(i),availPrev.get(i));
                     current_reservations.add(res);
                 }
+                //divides previous from the waitlist section
+                Reservation waitRes = new Reservation("0", "0", "waitlocation", 0, null,0);
+                current_reservations.add(waitRes);
+
+
+                String sqlWait = "SELECT * FROM waiting_lists WHERE user_id=" + user_id + " AND DATE(date) >= DATE(NOW());";
+                PreparedStatement waitStatement = connection.prepareStatement(sqlWait);
+                ResultSet waitResult = waitStatement.executeQuery();
+                Vector<Integer> waitTimeslots = new Vector<Integer>();
+                Vector<Integer> waitLocations = new Vector<Integer>();
+                Vector<Integer> waitIds = new Vector<Integer>();
+                Vector<Date> waitDates = new Vector<Date>();
+                Vector<Integer> waitAvailabilities = new Vector<Integer>();
+                //need to get the location and timeslot
+                while(waitResult.next()){
+                    int timeslot = waitResult.getInt("timeslot_id");
+                    waitTimeslots.add(timeslot);
+                    int location = waitResult.getInt("location_id");
+                    waitLocations.add(location);
+                    int waitid = waitResult.getInt("waiting_list_id");
+                    waitIds.add(waitid);
+                    Date date = waitResult.getDate("date");
+                    waitDates.add(date);
+                    int availability = waitResult.getInt("availability_id");
+                    waitAvailabilities.add(availability);
+                }
+
+                for(int i = 0; i < waitTimeslots.size(); i++){
+                    String sql2 = "SELECT * FROM timeslots WHERE timeslot_id=" + waitTimeslots.get(i);
+                    String sql3 = "SELECT location_name FROM recreation_facilities WHERE location_id=" + waitLocations.get(i);
+                    PreparedStatement statement2 = connection.prepareStatement(sql2);
+                    PreparedStatement statement3 = connection.prepareStatement(sql3);
+                    ResultSet resultSet2 = statement2.executeQuery(); // timeslot
+                    ResultSet resultSet3 = statement3.executeQuery(); // location
+
+                    String location = "";
+                    while(resultSet3.next()){
+                        location = resultSet3.getString("location_name");
+                    }
+                    String start_time = "";
+                    String end_time = "";
+                    while(resultSet2.next()){
+                        start_time = resultSet2.getString("start_time");
+                        end_time = resultSet2.getString("end_time");
+                    }
+
+                    Reservation res = new Reservation(start_time, end_time, location, waitIds.get(i), waitDates.get(i), waitAvailabilities.get(i));
+                    current_reservations.add(res);
+                }
+
                 connection.close();
 
             }catch (Exception e) {
