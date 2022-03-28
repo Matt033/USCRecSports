@@ -222,8 +222,10 @@ public class NotificationsFragment extends Fragment {
                             ResultSet result2 = statement2.executeQuery();
                             int currSpots = 0;
                             while(result2.next()){
-                                //need to update waiting list if currSpots is zero
                                 currSpots = result2.getInt("slots_available");
+                                //if currspots is zero and a waiting list exists, notify first user on list
+                                //user must be deleted from the waiting list after being notified
+                                //waiting list should only be maintained for current and future dates
                             }
                             currSpots++;
                             String sql3 = "UPDATE availability SET slots_available="+ currSpots + " WHERE availability_id=" + availability_id;
