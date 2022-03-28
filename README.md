@@ -18,3 +18,5 @@
     - nhauptman, nhauptman
     - mwilson, mwilson
     - trojan, ttrojan
+
+* App run in portrait mode
