@@ -226,6 +226,7 @@ public class ReservationFragment extends Fragment {
                         a.slotsAvailable = slots;
                         a.timeslot_id = i;
                         info.put(buttonIDs[i-1], a);
+                        Log.i("map", ""+buttonIDs[i-1]+" id");
                     }
                 }
             } catch (Exception e) {
@@ -407,7 +408,7 @@ public class ReservationFragment extends Fragment {
 
         @Override
         protected void onPostExecute(Availability a) {
-            //Log.i(">>>>> ", "hello world "+a.button_id);
+            Log.i(">>>>> ", "hello world "+a.button_id);
             Button b = root.findViewById(a.button_id);
             String label =
                     a.starttime + " - " + a.endtime + "    " +

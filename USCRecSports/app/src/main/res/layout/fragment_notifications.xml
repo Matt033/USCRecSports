@@ -57,7 +57,7 @@
             android:layout_width="400dp"
             android:layout_height="67dp"
             android:layout_marginStart="0dp"
-            android:layout_marginTop="400dp"
+            android:layout_marginTop="300dp"
             android:text="Previous Reservations:"
             android:textSize="17sp"
             app:layout_constraintLeft_toLeftOf="parent"
