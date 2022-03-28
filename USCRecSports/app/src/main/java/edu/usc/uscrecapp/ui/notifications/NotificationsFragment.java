@@ -15,6 +15,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+
+import edu.usc.uscrecapp.MainActivity;
 import edu.usc.uscrecapp.R;
 
 import java.sql.*;
@@ -30,7 +32,6 @@ public class NotificationsFragment extends Fragment {
     private static final String URL = "jdbc:mysql://10.0.2.2:3306/uscrecsports";
     private static final String USER = "root";
     private static final String PASSWORD = "root";
-
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -61,7 +62,8 @@ public class NotificationsFragment extends Fragment {
                 Vector<Date> dates = new Vector<Date>();
                 Vector<Integer> availabilities = new Vector<Integer>();
                 //placeholder but replace with actual user id's
-                String user_id = "3";
+                int user_id = ((MainActivity) getActivity()).getUserId();
+
                 //To get current and future reservations need to order by dates >= to today's date
                 String sql = "SELECT * FROM reservations WHERE user_id=" + user_id + " AND DATE(reservations.date) >= DATE(NOW());";
                 PreparedStatement statement = connection.prepareStatement(sql);
@@ -146,6 +148,7 @@ public class NotificationsFragment extends Fragment {
                     Reservation res = new Reservation(start_time, end_time, location, reservationsPrev.get(i), datesPrev.get(i),availPrev.get(i));
                     current_reservations.add(res);
                 }
+                connection.close();
 
             }catch (Exception e) {
                 Log.e("USC Rec Sports", "Error during MySQL communication", e);
@@ -158,7 +161,7 @@ public class NotificationsFragment extends Fragment {
             View root = binding.getRoot();
             //check upcoming and button to make sure they dont have to be zero
             int upcomingMargin = 90;
-            int previousMargin = 400;
+            int previousMargin = 750;
             int buttonMargin = 90;
             int prevIndex = 0;
             RelativeLayout upcomingRes = (RelativeLayout)root.findViewById(R.id.upcoming_layout);
@@ -180,7 +183,7 @@ public class NotificationsFragment extends Fragment {
                         RelativeLayout.LayoutParams.WRAP_CONTENT);
                 layoutParams.setMargins(0, upcomingMargin, 0, 0);
                 newReservation.setLayoutParams(layoutParams);
-                upcomingMargin += 50;
+                upcomingMargin += 90;
                 String displayText = location + " from " + startTime + " to " + endTime + " on " + date;
                 newReservation.setText(displayText);
                 upcomingRes.addView(newReservation);
@@ -188,7 +191,7 @@ public class NotificationsFragment extends Fragment {
 
                 RelativeLayout.LayoutParams buttonParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT,
                         RelativeLayout.LayoutParams.WRAP_CONTENT);
-                buttonParams.setMargins(900, buttonMargin, 0, 0);
+                buttonParams.setMargins(950, buttonMargin, 0, 0);
                 buttonParams.width = 100;
                 buttonParams.height = 80;
                 Button cancelButton = new Button(root.getContext());
@@ -210,7 +213,6 @@ public class NotificationsFragment extends Fragment {
 
                         try{
                             //removes reservation for user
-                            Class.forName("com.mysql.cj.jdbc.Driver");
                             Connection connection = DriverManager.getConnection(URL, USER, PASSWORD);
                             String sql = "DELETE FROM reservations WHERE reservation_id=" + reservation_id;
                             PreparedStatement statement = connection.prepareStatement(sql);
