@@ -28,11 +28,16 @@ import edu.usc.uscrecapp.MainActivity;
 import edu.usc.uscrecapp.R;
 
 
+import java.math.BigInteger;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.*;
+import java.util.Arrays;
 
 import edu.usc.uscrecapp.R;
 import edu.usc.uscrecapp.ui.home.HomeFragment;
@@ -63,15 +68,30 @@ public class LoginActivity extends AppCompatActivity {
                 String username = usernameEditText.getText().toString();
                 String password = passwordEditText.getText().toString();
 
+                MessageDigest md = null;
+                try {
+                    md = MessageDigest.getInstance("MD5");
+                } catch (NoSuchAlgorithmException e) {
+                    e.printStackTrace();
+                }
+                md.update(password.getBytes());
+                byte[] digest = md.digest();
+                BigInteger no = new BigInteger(1, digest);
+
+                // Convert message digest into hex value
+                String hashtext = no.toString(16);
+                while (hashtext.length() < 32) {
+                    hashtext = "0" + hashtext;
+                }
+                System.out.println(hashtext);
 
                 String [] usernames = {"jjso", "nhauptman", "mwilson", "trojan"};
-                String [] passwords = {"jjso", "nhauptman", "mwilson", "ttrojan"};
+                String [] hashes = {"94afe94ba08b50041f1f3fac087342ae", "8da388593b98421fa2e1c9b49d8bdf83", "aad6b199637cf8ec469761c71747004c", "ce60528079a4e3b33eb71b88a045c31a"};
 
                 boolean validCreds = false;
                 int userID = -1;
                 for(int i=0; i<4; i++){
-                    System.out.println(usernames[i]+" "+passwords[i]);
-                    if(username.equals(usernames[i]) && password.equals(passwords[i])){
+                    if(username.equals(usernames[i]) && hashtext.equals(hashes[i])){
                         validCreds = true;
                         userID = i+1;
                     }
