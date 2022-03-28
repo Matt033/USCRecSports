@@ -30,53 +30,26 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <TextView
-            android:id="@+id/textView1"
-            android:layout_width="400dp"
-            android:layout_height="67dp"
-            android:layout_marginStart="0dp"
-            android:layout_marginTop="40dp"
-            android:text="Upcoming Reservations:"
-            android:textSize="24sp"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/upcoming_layout"
             android:orientation="horizontal"
             android:layout_marginStart="0dp"
-            android:layout_marginTop="100dp">
+            android:layout_marginTop="0dp">
 
             <TextView
+                android:id="@+id/textView1"
                 android:layout_width="400dp"
                 android:layout_height="67dp"
                 android:layout_marginStart="0dp"
-                android:layout_marginTop="10dp"
-                android:text="Reservation at Lyon Center"></TextView>
-            <Button
-                android:layout_width="95dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="300dp"
                 android:layout_marginTop="0dp"
-                android:text="Cancel">
+                android:text="Upcoming Reservations:"
+                android:textSize="17sp"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:textColor="@color/black"/>
 
-            </Button>
-            <TextView
-                android:layout_width="400dp"
-                android:layout_height="67dp"
-                android:text="Reservation at Leavey"
-                android:layout_marginStart="0dp"
-                android:layout_marginTop="60dp">
-            </TextView>
-            <Button
-                android:layout_width="95dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="300dp"
-                android:layout_marginTop="50dp"
-                android:text="Cancel">
-            </Button>
         </RelativeLayout>
 
         <TextView
@@ -86,9 +59,10 @@
             android:layout_marginStart="0dp"
             android:layout_marginTop="400dp"
             android:text="Previous Reservations:"
-            android:textSize="24sp"
+            android:textSize="17sp"
             app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            android:textColor="@color/black"/>
 
         <RelativeLayout
             android:id="@+id/previous_layout"
@@ -98,12 +72,6 @@
             android:layout_marginTop="50dp"
             android:orientation="horizontal">
 
-            <TextView
-                android:layout_width="400dp"
-                android:layout_height="67dp"
-                android:layout_marginStart="0dp"
-                android:layout_marginTop="400dp"
-                android:text="Reservation at Cromwell"></TextView>
         </RelativeLayout>
 
     </RelativeLayout>
