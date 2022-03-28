@@ -210,33 +210,34 @@ public class NotificationsFragment extends Fragment {
                     public void onClick(View view){
                         upcomingRes.removeView(view); //removes button
                         upcomingRes.removeView(newReservation); //removes reservation
+                        new TimeSelectAsyncTask(reservation_id, availability_id);
 
-                        try{
-                            //removes reservation for user
-                            Connection connection = DriverManager.getConnection(URL, USER, PASSWORD);
-                            String sql = "DELETE FROM reservations WHERE reservation_id=" + reservation_id;
-                            PreparedStatement statement = connection.prepareStatement(sql);
-                            ResultSet result = statement.executeQuery();
-
-                            //each reservation is going to have to be associated with an availability id
-                            String sql2 = "SELECT * FROM availability WHERE availability_id=" + availability_id;
-                            PreparedStatement statement2 = connection.prepareStatement(sql2);
-                            ResultSet result2 = statement2.executeQuery();
-                            int currSpots = 0;
-                            while(result2.next()){
-                                currSpots = result2.getInt("slots_available");
-                                //if currspots is zero and a waiting list exists, notify first user on list
-                                //user must be deleted from the waiting list after being notified
-                                //waiting list should only be maintained for current and future dates
-                            }
-                            currSpots++;
-                            String sql3 = "UPDATE availability SET slots_available="+ currSpots + " WHERE availability_id=" + availability_id;
-                            PreparedStatement statement3 = connection.prepareStatement(sql3);
-                            ResultSet result3 = statement3.executeQuery();
-
-                        } catch (Exception e) {
-                            Log.e("USC Rec Sports", "Error during MySQL communication", e);
-                        }
+//                        try{
+//                            //removes reservation for user
+//                            Connection connection = DriverManager.getConnection(URL, USER, PASSWORD);
+//                            String sql = "DELETE FROM reservations WHERE reservation_id=" + reservation_id;
+//                            PreparedStatement statement = connection.prepareStatement(sql);
+//                            ResultSet result = statement.executeQuery();
+//
+//                            //each reservation is going to have to be associated with an availability id
+//                            String sql2 = "SELECT * FROM availability WHERE availability_id=" + availability_id;
+//                            PreparedStatement statement2 = connection.prepareStatement(sql2);
+//                            ResultSet result2 = statement2.executeQuery();
+//                            int currSpots = 0;
+//                            while(result2.next()){
+//                                currSpots = result2.getInt("slots_available");
+//                                //if currspots is zero and a waiting list exists, notify first user on list
+//                                //user must be deleted from the waiting list after being notified
+//                                //waiting list should only be maintained for current and future dates
+//                            }
+//                            currSpots++;
+//                            String sql3 = "UPDATE availability SET slots_available="+ currSpots + " WHERE availability_id=" + availability_id;
+//                            PreparedStatement statement3 = connection.prepareStatement(sql3);
+//                            ResultSet result3 = statement3.executeQuery();
+//
+//                        } catch (Exception e) {
+//                            Log.e("USC Rec Sports", "Error during MySQL communication", e);
+//                        }
                     }
                 });
                 upcomingRes.addView(cancelButton);
@@ -280,6 +281,45 @@ public class NotificationsFragment extends Fragment {
             this.reservation_id = reservation;
             this.date = date;
             this.availability_id = availability;
+        }
+    }
+
+    public class TimeSelectAsyncTask extends AsyncTask<Void, Void, Void>{
+        int reservation_id;
+        int availability_id;
+        public TimeSelectAsyncTask(int reservation, int availability){
+            this.reservation_id = reservation;
+            this.availability_id = availability;
+        }
+        @Override
+        protected Void doInBackground(Void...voids){
+            try{
+                //removes reservation for user
+                Connection connection = DriverManager.getConnection(URL, USER, PASSWORD);
+                String sql = "DELETE FROM reservations WHERE reservation_id=" + reservation_id;
+                PreparedStatement statement = connection.prepareStatement(sql);
+                ResultSet result = statement.executeQuery();
+
+                //each reservation is going to have to be associated with an availability id
+                String sql2 = "SELECT * FROM availability WHERE availability_id=" + availability_id;
+                PreparedStatement statement2 = connection.prepareStatement(sql2);
+                ResultSet result2 = statement2.executeQuery();
+                int currSpots = 0;
+                while(result2.next()){
+                    currSpots = result2.getInt("slots_available");
+                    //if currspots is zero and a waiting list exists, notify first user on list
+                    //user must be deleted from the waiting list after being notified
+                    //waiting list should only be maintained for current and future dates
+                }
+                currSpots++;
+                String sql3 = "UPDATE availability SET slots_available="+ currSpots + " WHERE availability_id=" + availability_id;
+                PreparedStatement statement3 = connection.prepareStatement(sql3);
+                ResultSet result3 = statement3.executeQuery();
+
+            } catch (Exception e) {
+                Log.e("USC Rec Sports", "Error during MySQL communication", e);
+            }
+            return null;
         }
     }
 }
