@@ -35,7 +35,7 @@ public class NotificationsFragment extends Fragment {
     private FragmentNotificationsBinding binding;
     private static final String URL = "jdbc:mysql://10.0.2.2:3306/uscrecsports";
     private static final String USER = "root";
-    private static final String PASSWORD = "Barkley2001$";
+    private static final String PASSWORD = "root";
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
