@@ -130,7 +130,7 @@ public class HomeFragment extends Fragment {
         int userID;
         private static final String URL = "jdbc:mysql://10.0.2.2:3306/uscrecsports";
         private static final String USER = "root";
-        private static final String PASSWORD = "Barkley2001$";
+        private static final String PASSWORD = "root";
 
         public UpdateAsyncTask(int id, String dt) {
             userID=((MainActivity) getActivity()).getUserId();
