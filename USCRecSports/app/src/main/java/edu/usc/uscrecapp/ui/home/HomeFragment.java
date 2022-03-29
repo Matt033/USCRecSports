@@ -2,6 +2,7 @@
         package edu.usc.uscrecapp.ui.home;
 
         import android.content.Intent;
+        import android.os.AsyncTask;
         import android.os.Bundle;
         import android.view.LayoutInflater;
         import android.view.View;
@@ -16,6 +17,13 @@
         import androidx.lifecycle.ViewModelProvider;
         import androidx.navigation.Navigation;
 
+        import java.sql.Connection;
+        import java.sql.DriverManager;
+        import java.sql.PreparedStatement;
+        import java.sql.ResultSet;
+        import java.sql.SQLException;
+        import java.util.Map;
+
         import edu.usc.uscrecapp.MainActivity;
         import edu.usc.uscrecapp.R;
         import edu.usc.uscrecapp.databinding.FragmentHomeBinding;
@@ -26,6 +34,7 @@ public class HomeFragment extends Fragment {
 
     private FragmentHomeBinding binding;
     private FragmentReservationBinding rbinding;
+    public Button b_summary;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -40,6 +49,9 @@ public class HomeFragment extends Fragment {
         homeViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
 
         int userID = ((MainActivity) getActivity()).getUserId();
+
+        b_summary = root.findViewById(R.id.Summary);
+        new HomeFragment.UpdateAsyncTask(0, "null").execute();
 
 
         Button b_lyon_center = root.findViewById(R.id.lyonCenter);
@@ -92,7 +104,6 @@ public class HomeFragment extends Fragment {
                 Navigation.findNavController(view).navigate(R.id.navigation_reservation);
             }
         });
-        Button b_summary = root.findViewById(R.id.Summary);
         b_summary.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -112,4 +123,44 @@ public class HomeFragment extends Fragment {
         super.onDestroyView();
         binding = null;
     }
+
+
+    public class UpdateAsyncTask extends AsyncTask{
+        int userID;
+        private static final String URL = "jdbc:mysql://10.0.2.2:3306/uscrecsports";
+        private static final String USER = "root";
+        private static final String PASSWORD = "Barkley2001$";
+
+        public UpdateAsyncTask(int id, String dt) {
+            userID=((MainActivity) getActivity()).getUserId();
+        }
+
+        @Override
+        protected Void doInBackground(Object[] objects) {
+            System.out.println("Background");
+            try {
+                Connection connection = DriverManager.getConnection(URL, USER, PASSWORD);
+                String sql = "SELECT * FROM reservations WHERE user_id=" + userID;// + " AND DATE(reservations.date) >= DATE(NOW());";
+                PreparedStatement statement = connection.prepareStatement(sql);
+                ResultSet resultSet = statement.executeQuery();
+                int rowCount =0;
+                if(resultSet.last()){
+                    rowCount = resultSet.getRow();
+                    resultSet.beforeFirst();
+                }
+                System.out.println("RC:"+rowCount);
+                if(rowCount > 0){
+                    b_summary.setText("View your "+rowCount+" upcoming reservations");
+                }
+
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+            }
+            return null;
+        }
+    }
+
+
 }
+
+
