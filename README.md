@@ -19,4 +19,6 @@
     - mwilson, mwilson
     - trojan, ttrojan
 
+* Waiting List notifications are sent with the respective emails for the user accounts
+
 * App run in portrait mode
