@@ -140,7 +140,7 @@ public class HomeFragment extends Fragment {
             System.out.println("Background");
             try {
                 Connection connection = DriverManager.getConnection(URL, USER, PASSWORD);
-                String sql = "SELECT * FROM reservations WHERE user_id=" + userID;// + " AND DATE(reservations.date) >= DATE(NOW());";
+                String sql = "SELECT * FROM reservations WHERE user_id=" + userID + " AND DATE(reservations.date) >= DATE(NOW());";
                 PreparedStatement statement = connection.prepareStatement(sql);
                 ResultSet resultSet = statement.executeQuery();
                 int rowCount =0;
