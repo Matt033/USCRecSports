@@ -151,11 +151,17 @@ public class HomeFragment extends Fragment {
                 }
                 System.out.println("RC:"+rowCount);
                 String resDates = "";
-                while(resultSet.next()){
+                int count = 0;
+                while(resultSet.next() && count < 3){
                     resDates += resultSet.getDate("date");
-                    resDates += ",";
+                    resDates += ",\n";
+                    count++;
+                }
+                if(count == 3){
+                    resDates += " etc";
                 }
                 System.out.println(resDates);
+
                 if(rowCount > 0){
                     b_summary.setText("View your "+rowCount+" upcoming reservations on \n"+resDates);
                 }

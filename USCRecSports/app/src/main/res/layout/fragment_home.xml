@@ -36,8 +36,8 @@
 
     <Button
         android:id="@+id/Summary"
-        android:layout_width="180dp"
-        android:layout_height="105dp"
+        android:layout_width="170dp"
+        android:layout_height="90dp"
         android:backgroundTint="@color/black"
         android:text="User Profile Page"
         android:textSize="10dp"
