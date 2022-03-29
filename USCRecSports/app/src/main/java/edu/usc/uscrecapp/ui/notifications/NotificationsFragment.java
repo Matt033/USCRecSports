@@ -1,6 +1,8 @@
 package edu.usc.uscrecapp.ui.notifications;
 
+import android.content.Intent;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -15,6 +17,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+
+import org.w3c.dom.Text;
 
 import edu.usc.uscrecapp.MainActivity;
 import edu.usc.uscrecapp.R;
@@ -65,7 +69,7 @@ public class NotificationsFragment extends Fragment {
                 int user_id = ((MainActivity) getActivity()).getUserId();
 
                 //To get current and future reservations need to order by dates >= to today's date
-                String sql = "SELECT * FROM reservations WHERE user_id=" + user_id + " AND DATE(reservations.date) >= DATE(NOW());";
+                String sql = "SELECT * FROM reservations WHERE user_id=" + user_id + " AND DATE(reservations.date) >= DATE(NOW()) ORDER BY DATE(date) ASC LIMIT 5;";
                 PreparedStatement statement = connection.prepareStatement(sql);
                 ResultSet resultSet = statement.executeQuery();
                 while(resultSet.next()){
@@ -108,7 +112,7 @@ public class NotificationsFragment extends Fragment {
 
                 //get previous reservations
                 //limits to only 10 reservations
-                String prevSql = "SELECT * FROM reservations WHERE user_id = " + user_id + " AND DATE(reservations.date) < DATE(NOW()) LIMIT 10;";
+                String prevSql = "SELECT * FROM reservations WHERE user_id = " + user_id + " AND DATE(reservations.date) < DATE(NOW()) LIMIT 5;";
                 PreparedStatement prepPrev = connection.prepareStatement(prevSql);
                 ResultSet prevResult = prepPrev.executeQuery();
                 Vector<Integer> timeslotsPrev = new Vector<Integer>();
@@ -212,11 +216,12 @@ public class NotificationsFragment extends Fragment {
             View root = binding.getRoot();
             //check upcoming and button to make sure they dont have to be zero
             int upcomingMargin = 90;
-            int previousMargin = 750;
+            int previousMargin = 475;
             int buttonMargin = 90;
             int prevIndex = 0;
             RelativeLayout upcomingRes = (RelativeLayout)root.findViewById(R.id.upcoming_layout);
             RelativeLayout previousRes = (RelativeLayout)root.findViewById(R.id.previous_layout);
+            RelativeLayout waitRes = (RelativeLayout)root.findViewById(R.id.waiting_layout);
             //handles upcoming reservations - these should have cancel buttons
             for(int i = 0; i < result.size(); i++){
                 String location = result.get(i).location;
@@ -237,6 +242,7 @@ public class NotificationsFragment extends Fragment {
                 upcomingMargin += 90;
                 String displayText = location + " from " + startTime + " to " + endTime + " on " + date;
                 newReservation.setText(displayText);
+                newReservation.setTextSize(12);
                 upcomingRes.addView(newReservation);
                 //cancellation button for each upcoming reservation
 
@@ -261,41 +267,19 @@ public class NotificationsFragment extends Fragment {
                     public void onClick(View view){
                         upcomingRes.removeView(view); //removes button
                         upcomingRes.removeView(newReservation); //removes reservation
-                        new TimeSelectAsyncTask(reservation_id, availability_id);
-
-//                        try{
-//                            //removes reservation for user
-//                            Connection connection = DriverManager.getConnection(URL, USER, PASSWORD);
-//                            String sql = "DELETE FROM reservations WHERE reservation_id=" + reservation_id;
-//                            PreparedStatement statement = connection.prepareStatement(sql);
-//                            ResultSet result = statement.executeQuery();
-//
-//                            //each reservation is going to have to be associated with an availability id
-//                            String sql2 = "SELECT * FROM availability WHERE availability_id=" + availability_id;
-//                            PreparedStatement statement2 = connection.prepareStatement(sql2);
-//                            ResultSet result2 = statement2.executeQuery();
-//                            int currSpots = 0;
-//                            while(result2.next()){
-//                                currSpots = result2.getInt("slots_available");
-//                                //if currspots is zero and a waiting list exists, notify first user on list
-//                                //user must be deleted from the waiting list after being notified
-//                                //waiting list should only be maintained for current and future dates
-//                            }
-//                            currSpots++;
-//                            String sql3 = "UPDATE availability SET slots_available="+ currSpots + " WHERE availability_id=" + availability_id;
-//                            PreparedStatement statement3 = connection.prepareStatement(sql3);
-//                            ResultSet result3 = statement3.executeQuery();
-//
-//                        } catch (Exception e) {
-//                            Log.e("USC Rec Sports", "Error during MySQL communication", e);
-//                        }
+                        System.out.println("calling timeselect function here");
+                        new TimeSelectAsyncTask(reservation_id, availability_id).execute();
                     }
                 });
                 upcomingRes.addView(cancelButton);
             }
-
+            int waitIndex = 0;
             for(int j = prevIndex; j < result.size(); j++){
                 String location = result.get(j).location;
+                if(location == "waitlocation"){
+                    waitIndex = j+1;
+                    break;
+                }
                 String startTime = result.get(j).start_time;
                 String endTime = result.get(j).end_time;
                 Date date = result.get(j).date;
@@ -307,8 +291,27 @@ public class NotificationsFragment extends Fragment {
                 previousMargin += 50;
                 String displayText = location + " from " + startTime + " to " + endTime + " on " + date;
                 newReservation.setText(displayText);
+                newReservation.setTextSize(12);
                 previousRes.addView(newReservation);
             }
+            int waitMargin = 80;
+            for(int k = waitIndex; k < result.size(); k++){
+                String location = result.get(k).location;
+                String startTime = result.get(k).start_time;
+                String endTime = result.get(k).end_time;
+                Date date = result.get(k).date;
+                TextView newReservation = new TextView(root.getContext());
+                RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT,
+                        RelativeLayout.LayoutParams.WRAP_CONTENT);
+                layoutParams.setMargins(0, waitMargin, 0, 0);
+                newReservation.setLayoutParams(layoutParams);
+                waitMargin += 50;
+                String displayText = location + " from " + startTime + " to " + endTime + " on " + date;
+                newReservation.setText(displayText);
+                newReservation.setTextSize(12);
+                waitRes.addView(newReservation);
+            }
+
         }
     }
 
@@ -344,6 +347,7 @@ public class NotificationsFragment extends Fragment {
         }
         @Override
         protected Void doInBackground(Void...voids){
+            System.out.println("Inside of timselectasync");
             try{
                 //removes reservation for user
                 Connection connection = DriverManager.getConnection(URL, USER, PASSWORD);
@@ -363,6 +367,44 @@ public class NotificationsFragment extends Fragment {
                     //if currspots is zero and a waiting list exists, notify first user on list
                     //user must be deleted from the waiting list after being notified
                     //waiting list should only be maintained for current and future dates
+                    if(currSpots == 0){
+                        String sqlWait = "SELECT * FROM waiting_lists WHERE availability_id=" + availability_id;
+                        PreparedStatement statementWait = connection.prepareStatement(sqlWait);
+                        ResultSet resultWait = statementWait.executeQuery();
+                        Vector<Integer> userIds = new Vector<Integer>();
+                        while(resultWait.next()){
+                            int user_id = resultWait.getInt("user_id");
+                            userIds.add(user_id);
+                        }
+                        Vector<String> emails = new Vector<String>();
+                        for(int i = 0; i < userIds.size(); i++){
+                            String sqlUser = "SELECT * FROM users WHERE user_id=" + userIds.get(i);
+                            PreparedStatement statementUser = connection.prepareStatement(sqlUser);
+                            ResultSet resultUser = statementUser.executeQuery();
+                            while(resultUser.next()){
+                                String email = resultUser.getString("email");
+                                emails.add(email);
+                            }
+                        }
+                        String[] emailList = new String[emails.size()];
+                        for(int j = 0; j < emails.size(); j++){
+                            emailList[j] = emails.get(j);
+                        }
+
+                        Intent emailIntent = new Intent(Intent.ACTION_SEND);
+                        emailIntent.setData(Uri.parse("mailto:"));
+                        emailIntent.setType("text/plain");
+                        emailIntent.putExtra(Intent.EXTRA_EMAIL, emailList);
+                        emailIntent.putExtra(Intent.EXTRA_SUBJECT, "USC REC Sports Waiting List Update");
+                        //location timeslot, date
+                        emailIntent.putExtra(Intent.EXTRA_TEXT, "A new spot has opened up for one of your waitlist reservations. Please visit the USCRecSportsApp now to book!");
+                        startActivity(Intent.createChooser(emailIntent, "Send mail..."));
+
+
+
+
+
+                    }
                 }
                 currSpots++;
                 Statement stmt2 = connection.createStatement();
