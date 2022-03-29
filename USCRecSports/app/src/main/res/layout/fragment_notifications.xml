@@ -6,6 +6,7 @@
     android:layout_height="match_parent"
     tools:context=".ui.notifications.NotificationsFragment">
 
+
     <TextView
         android:id="@+id/text_notifications"
         android:layout_width="match_parent"
@@ -18,6 +19,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
 
     <RelativeLayout
         android:id="@+id/vertical_layout"
@@ -44,7 +46,7 @@
                 android:layout_height="67dp"
                 android:layout_marginStart="0dp"
                 android:layout_marginTop="0dp"
-                android:text="Upcoming Reservations (Up to 5):"
+                android:text="Next 3 Reservations:"
                 android:textSize="17sp"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
@@ -54,11 +56,11 @@
 
         <TextView
             android:id="@+id/textView2"
-            android:layout_width="400dp"
+            android:layout_width="250dp"
             android:layout_height="67dp"
             android:layout_marginStart="0dp"
-            android:layout_marginTop="200dp"
-            android:text="Previous Reservations:"
+            android:layout_marginTop="150dp"
+            android:text="3 Previous Reservations:"
             android:textSize="17sp"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -74,12 +76,13 @@
 
         </RelativeLayout>
 
+
         <RelativeLayout
             android:id="@+id/waiting_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="0dp"
-            android:layout_marginTop="350dp"
+            android:layout_marginTop="300dp"
             android:orientation="horizontal">
 
             <TextView
@@ -98,5 +101,7 @@
         </RelativeLayout>
 
     </RelativeLayout>
+
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

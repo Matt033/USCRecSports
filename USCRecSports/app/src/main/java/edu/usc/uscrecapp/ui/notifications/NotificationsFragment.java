@@ -35,7 +35,7 @@ public class NotificationsFragment extends Fragment {
     private FragmentNotificationsBinding binding;
     private static final String URL = "jdbc:mysql://10.0.2.2:3306/uscrecsports";
     private static final String USER = "root";
-    private static final String PASSWORD = "root";
+    private static final String PASSWORD = "Barkley2001$";
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -69,7 +69,7 @@ public class NotificationsFragment extends Fragment {
                 int user_id = ((MainActivity) getActivity()).getUserId();
 
                 //To get current and future reservations need to order by dates >= to today's date
-                String sql = "SELECT * FROM reservations WHERE user_id=" + user_id + " AND DATE(reservations.date) >= DATE(NOW()) ORDER BY DATE(date) ASC LIMIT 5;";
+                String sql = "SELECT * FROM reservations WHERE user_id=" + user_id + " AND DATE(reservations.date) >= DATE(NOW()) ORDER BY DATE(date) ASC LIMIT 3;";
                 PreparedStatement statement = connection.prepareStatement(sql);
                 ResultSet resultSet = statement.executeQuery();
                 while(resultSet.next()){
@@ -112,7 +112,7 @@ public class NotificationsFragment extends Fragment {
 
                 //get previous reservations
                 //limits to only 10 reservations
-                String prevSql = "SELECT * FROM reservations WHERE user_id = " + user_id + " AND DATE(reservations.date) < DATE(NOW()) LIMIT 5;";
+                String prevSql = "SELECT * FROM reservations WHERE user_id = " + user_id + " AND DATE(reservations.date) < DATE(NOW()) LIMIT 3;";
                 PreparedStatement prepPrev = connection.prepareStatement(prevSql);
                 ResultSet prevResult = prepPrev.executeQuery();
                 Vector<Integer> timeslotsPrev = new Vector<Integer>();
@@ -158,7 +158,7 @@ public class NotificationsFragment extends Fragment {
                 current_reservations.add(waitRes);
 
 
-                String sqlWait = "SELECT * FROM waiting_lists WHERE user_id=" + user_id + " AND DATE(date) >= DATE(NOW());";
+                String sqlWait = "SELECT * FROM waiting_lists WHERE user_id=" + user_id + " AND DATE(date) >= DATE(NOW()) LIMIT 3;";
                 PreparedStatement waitStatement = connection.prepareStatement(sqlWait);
                 ResultSet waitResult = waitStatement.executeQuery();
                 Vector<Integer> waitTimeslots = new Vector<Integer>();
@@ -216,7 +216,7 @@ public class NotificationsFragment extends Fragment {
             View root = binding.getRoot();
             //check upcoming and button to make sure they dont have to be zero
             int upcomingMargin = 90;
-            int previousMargin = 475;
+            int previousMargin = 380;
             int buttonMargin = 90;
             int prevIndex = 0;
             RelativeLayout upcomingRes = (RelativeLayout)root.findViewById(R.id.upcoming_layout);
@@ -242,7 +242,7 @@ public class NotificationsFragment extends Fragment {
                 upcomingMargin += 90;
                 String displayText = location + " from " + startTime + " to " + endTime + " on " + date;
                 newReservation.setText(displayText);
-                newReservation.setTextSize(12);
+                newReservation.setTextSize(10);
                 upcomingRes.addView(newReservation);
                 //cancellation button for each upcoming reservation
 
@@ -310,7 +310,7 @@ public class NotificationsFragment extends Fragment {
                 waitMargin += 90;
                 String displayText = location + " from " + startTime + " to " + endTime + " on " + date;
                 newReservation.setText(displayText);
-                newReservation.setTextSize(12);
+                newReservation.setTextSize(10);
                 waitRes.addView(newReservation);
 
                 RelativeLayout.LayoutParams buttonParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT,
@@ -321,7 +321,7 @@ public class NotificationsFragment extends Fragment {
                 buttonParams.height = 80;
                 Button cancelButton = new Button(root.getContext());
                 cancelButton.setLayoutParams(buttonParams);
-                buttonMargin += 90;
+                buttonWait += 90;
                 cancelButton.setBackgroundColor(Color.RED);
                 cancelButton.setText("Cancel");
                 cancelButton.setTextSize(7);
@@ -335,7 +335,7 @@ public class NotificationsFragment extends Fragment {
                         new WaitListAsyncTask(reservation_id).execute();
                     }
                 });
-                upcomingRes.addView(cancelButton);
+                waitRes.addView(cancelButton);
 
             }
 
@@ -375,7 +375,7 @@ public class NotificationsFragment extends Fragment {
             try{
                 Connection connection = DriverManager.getConnection(URL, USER, PASSWORD);
                 Statement stmt = connection.createStatement();
-                String sql = "DELETE * FROM waiting_lists WHERE waiting_list_id=" + reservation_id;
+                String sql = "DELETE FROM waiting_lists WHERE waiting_list_id=" + reservation_id;
                 stmt.executeUpdate(sql);
             }
             catch(Exception e){
@@ -434,18 +434,22 @@ public class NotificationsFragment extends Fragment {
                         }
                         String[] emailList = new String[emails.size()];
                         for(int j = 0; j < emails.size(); j++){
+                            System.out.println(emails.get(j));
                             emailList[j] = emails.get(j);
                         }
 
-                        Intent emailIntent = new Intent(Intent.ACTION_SEND);
+                        Intent emailIntent = new Intent(Intent.ACTION_SENDTO);
                         emailIntent.setData(Uri.parse("mailto:"));
                         emailIntent.setType("text/plain");
+                        View root = binding.getRoot();
+
                         emailIntent.putExtra(Intent.EXTRA_EMAIL, emailList);
                         emailIntent.putExtra(Intent.EXTRA_SUBJECT, "USC REC Sports Waiting List Update");
                         //location timeslot, date
                         emailIntent.putExtra(Intent.EXTRA_TEXT, "A new spot has opened up for one of your waitlist reservations. Please visit the USCRecSportsApp now to book!");
-                        startActivity(Intent.createChooser(emailIntent, "Send mail..."));
 
+                        startActivity(Intent.createChooser(emailIntent, "Send mail..."));
+                        System.out.println("EMAIL SENT");
                     }
                 }
                 currSpots++;
