@@ -144,13 +144,19 @@ public class HomeFragment extends Fragment {
                 PreparedStatement statement = connection.prepareStatement(sql);
                 ResultSet resultSet = statement.executeQuery();
                 int rowCount =0;
-                if(resultSet.last()){
+                if(resultSet.last()) {
                     rowCount = resultSet.getRow();
                     resultSet.beforeFirst();
                 }
                 System.out.println("RC:"+rowCount);
+                String resDates = "";
+                while(resultSet.next()){
+                    resDates += resultSet.getDate("date");
+                    resDates += ",";
+                }
+                System.out.println(resDates);
                 if(rowCount > 0){
-                    b_summary.setText("View your "+rowCount+" upcoming reservations");
+                    b_summary.setText("View your "+rowCount+" upcoming reservations on \n"+resDates);
                 }
 
             } catch (SQLException throwables) {
