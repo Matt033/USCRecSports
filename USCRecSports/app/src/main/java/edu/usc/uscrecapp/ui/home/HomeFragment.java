@@ -114,7 +114,8 @@ public class HomeFragment extends Fragment {
 
         // temporary hack to set the default user id and location id
         // The following two lines should be removed.
-
+        ((MainActivity) getActivity()).setLocationId(1);
+        ((MainActivity) getActivity()).setUserId(userID);
         return root;
     }
 
