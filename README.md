@@ -19,6 +19,6 @@
     - mwilson, mwilson
     - trojan, ttrojan
 
-* Waiting List notifications are sent with the respective emails for the user accounts
+* Waiting List notifications are sent to the respective emails associated with the user accounts. To change this, the emails can be directly changed in the users table of sql file.
 
 * App run in portrait mode
