@@ -294,22 +294,49 @@ public class NotificationsFragment extends Fragment {
                 newReservation.setTextSize(12);
                 previousRes.addView(newReservation);
             }
-            int waitMargin = 80;
+            int waitMargin = 90;
+            int buttonWait = 90;
             for(int k = waitIndex; k < result.size(); k++){
                 String location = result.get(k).location;
                 String startTime = result.get(k).start_time;
                 String endTime = result.get(k).end_time;
                 Date date = result.get(k).date;
+                int reservation_id = result.get(k).reservation_id;
                 TextView newReservation = new TextView(root.getContext());
                 RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT,
                         RelativeLayout.LayoutParams.WRAP_CONTENT);
                 layoutParams.setMargins(0, waitMargin, 0, 0);
                 newReservation.setLayoutParams(layoutParams);
-                waitMargin += 50;
+                waitMargin += 90;
                 String displayText = location + " from " + startTime + " to " + endTime + " on " + date;
                 newReservation.setText(displayText);
                 newReservation.setTextSize(12);
                 waitRes.addView(newReservation);
+
+                RelativeLayout.LayoutParams buttonParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT,
+                        RelativeLayout.LayoutParams.WRAP_CONTENT);
+
+                buttonParams.setMargins(950, buttonWait, 0, 0);
+                buttonParams.width = 100;
+                buttonParams.height = 80;
+                Button cancelButton = new Button(root.getContext());
+                cancelButton.setLayoutParams(buttonParams);
+                buttonMargin += 90;
+                cancelButton.setBackgroundColor(Color.RED);
+                cancelButton.setText("Cancel");
+                cancelButton.setTextSize(7);
+                cancelButton.setTextColor(Color.WHITE);
+                cancelButton.setOnClickListener(new View.OnClickListener(){
+                    @Override
+                    public void onClick(View view){
+                        waitRes.removeView(view); //removes button
+                        waitRes.removeView(newReservation); //removes reservation
+                        System.out.println("calling timeselect function here");
+                        new WaitListAsyncTask(reservation_id).execute();
+                    }
+                });
+                upcomingRes.addView(cancelButton);
+
             }
 
         }
@@ -338,6 +365,26 @@ public class NotificationsFragment extends Fragment {
         }
     }
 
+    public class WaitListAsyncTask extends AsyncTask<Void, Void, Void>{
+        int reservation_id;
+        public WaitListAsyncTask(int reservation){
+            this.reservation_id = reservation;
+        }
+        @Override
+        protected Void doInBackground(Void... voids){
+            try{
+                Connection connection = DriverManager.getConnection(URL, USER, PASSWORD);
+                Statement stmt = connection.createStatement();
+                String sql = "DELETE * FROM waiting_lists WHERE waiting_list_id=" + reservation_id;
+                stmt.executeUpdate(sql);
+            }
+            catch(Exception e){
+                Log.e("USC Rec Sports", "Error during MySQL communication", e);
+            }
+            return null;
+        }
+    }
+
     public class TimeSelectAsyncTask extends AsyncTask<Void, Void, Void>{
         int reservation_id;
         int availability_id;
@@ -347,7 +394,6 @@ public class NotificationsFragment extends Fragment {
         }
         @Override
         protected Void doInBackground(Void...voids){
-            System.out.println("Inside of timselectasync");
             try{
                 //removes reservation for user
                 Connection connection = DriverManager.getConnection(URL, USER, PASSWORD);
@@ -399,10 +445,6 @@ public class NotificationsFragment extends Fragment {
                         //location timeslot, date
                         emailIntent.putExtra(Intent.EXTRA_TEXT, "A new spot has opened up for one of your waitlist reservations. Please visit the USCRecSportsApp now to book!");
                         startActivity(Intent.createChooser(emailIntent, "Send mail..."));
-
-
-
-
 
                     }
                 }
