@@ -34,7 +34,7 @@ public class HomeFragment extends Fragment {
 
     private FragmentHomeBinding binding;
     private FragmentReservationBinding rbinding;
-    public Button b_summary;
+    public TextView b_summary;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -130,7 +130,7 @@ public class HomeFragment extends Fragment {
         int userID;
         private static final String URL = "jdbc:mysql://10.0.2.2:3306/uscrecsports";
         private static final String USER = "root";
-        private static final String PASSWORD = "root";
+        private static final String PASSWORD = "Barkley2001$";
 
         public UpdateAsyncTask(int id, String dt) {
             userID=((MainActivity) getActivity()).getUserId();

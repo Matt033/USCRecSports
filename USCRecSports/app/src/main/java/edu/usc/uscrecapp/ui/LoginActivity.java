@@ -85,12 +85,12 @@ public class LoginActivity extends AppCompatActivity {
                 }
                 System.out.println(hashtext);
 
-                String [] usernames = {"jjso", "nhauptman", "mwilson", "trojan"};
-                String [] hashes = {"94afe94ba08b50041f1f3fac087342ae", "8da388593b98421fa2e1c9b49d8bdf83", "aad6b199637cf8ec469761c71747004c", "ce60528079a4e3b33eb71b88a045c31a"};
+                String [] usernames = {"jjso", "nhauptman", "mwilson", "trojan", "test", "test1", "test2"};
+                String [] hashes = {"94afe94ba08b50041f1f3fac087342ae", "8da388593b98421fa2e1c9b49d8bdf83", "aad6b199637cf8ec469761c71747004c", "ce60528079a4e3b33eb71b88a045c31a", "098f6bcd4621d373cade4e832627b4f6", "5a105e8b9d40e1329780d62ea2265d8a", "ad0234829205b9033196ba818f7a872b"};
 
                 boolean validCreds = false;
                 int userID = -1;
-                for(int i=0; i<4; i++){
+                for(int i=0; i<7; i++){
                     if(username.equals(usernames[i]) && hashtext.equals(hashes[i])){
                         validCreds = true;
                         userID = i+1;
