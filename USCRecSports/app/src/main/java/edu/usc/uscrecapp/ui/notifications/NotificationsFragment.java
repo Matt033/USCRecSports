@@ -1,10 +1,12 @@
 package edu.usc.uscrecapp.ui.notifications;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Looper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,10 +25,21 @@ import org.w3c.dom.Text;
 import edu.usc.uscrecapp.MainActivity;
 import edu.usc.uscrecapp.R;
 
+import java.io.UnsupportedEncodingException;
 import java.sql.*;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Vector;
 
+
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.PasswordAuthentication;
+import javax.mail.Session;
+import javax.mail.Transport;
+import javax.mail.internet.AddressException;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
 
 import edu.usc.uscrecapp.databinding.FragmentNotificationsBinding;
 
@@ -35,7 +48,9 @@ public class NotificationsFragment extends Fragment {
     private FragmentNotificationsBinding binding;
     private static final String URL = "jdbc:mysql://10.0.2.2:3306/uscrecsports";
     private static final String USER = "root";
-    private static final String PASSWORD = "root";
+    private static final String PASSWORD = "Matthewwilson033!";
+    private static final String username = "matt033.wilson@gmail.com";
+    private static final String password = "Matthewwilson033!";
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -438,18 +453,26 @@ public class NotificationsFragment extends Fragment {
                             emailList[j] = emails.get(j);
                         }
 
-                        Intent emailIntent = new Intent(Intent.ACTION_SENDTO);
-                        emailIntent.setData(Uri.parse("mailto:"));
-                        emailIntent.setType("text/plain");
-                        View root = binding.getRoot();
-
-                        emailIntent.putExtra(Intent.EXTRA_EMAIL, emailList);
-                        emailIntent.putExtra(Intent.EXTRA_SUBJECT, "USC REC Sports Waiting List Update");
-                        //location timeslot, date
-                        emailIntent.putExtra(Intent.EXTRA_TEXT, "A new spot has opened up for one of your waitlist reservations. Please visit the USCRecSportsApp now to book!");
-
-                        startActivity(Intent.createChooser(emailIntent, "Send mail..."));
-                        System.out.println("EMAIL SENT");
+//                        Intent emailIntent = new Intent(Intent.ACTION_SENDTO);
+//                        emailIntent.setData(Uri.parse("mailto:"));
+//                        emailIntent.setType("text/plain");
+//                        View root = binding.getRoot();
+//
+//                        emailIntent.putExtra(Intent.EXTRA_EMAIL, emailList);
+//                        emailIntent.putExtra(Intent.EXTRA_SUBJECT, "USC REC Sports Waiting List Update");
+//                        //location timeslot, date
+//                        emailIntent.putExtra(Intent.EXTRA_TEXT, "A new spot has opened up for one of your waitlist reservations. Please visit the USCRecSportsApp now to book!");
+//
+//                        startActivity(Intent.createChooser(emailIntent, "Send mail..."));
+//                        System.out.println("EMAIL SENT");
+                        Looper.prepare();
+                        String email = "nhauptma@usc.edu";
+                        String subject = "USC Rec Sports Update!";
+                        String message = "Your notification from USC Rec Sports App!!";
+                        for(int i = 0; i < emails.size(); i++){
+                            email = emails.get(i);
+                            sendMail(email,subject,message);
+                        }
                     }
                 }
                 currSpots++;
@@ -461,6 +484,70 @@ public class NotificationsFragment extends Fragment {
 
             } catch (Exception e) {
                 Log.e("USC Rec Sports", "Error during MySQL communication", e);
+            }
+            return null;
+        }
+    }
+
+    private void sendMail(String email, String subject, String messageBody)
+    {
+        Session session = createSessionObject();
+
+        try {
+            Message message = createMessage(email, subject, messageBody, session);
+            new SendMailTask().execute(message);
+        } catch (AddressException e) {
+            e.printStackTrace();
+        } catch (MessagingException e) {
+            e.printStackTrace();
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+    }
+    private Session createSessionObject() {
+        Properties properties = new Properties();
+        properties.put("mail.smtp.auth", "true");
+        properties.put("mail.smtp.starttls.enable", "true");
+        properties.put("mail.smtp.host", "smtp.gmail.com");
+        properties.put("mail.smtp.port", "587");
+
+        return Session.getInstance(properties, new javax.mail.Authenticator() {
+            protected PasswordAuthentication getPasswordAuthentication() {
+                return new PasswordAuthentication(username, password);
+            }
+        });
+    }
+    private Message createMessage(String email, String subject, String messageBody, Session session) throws MessagingException, UnsupportedEncodingException {
+        Message message = new MimeMessage(session);
+        message.setFrom(new InternetAddress("matt033.wilson@gmail.com", "USC Rec Sports"));
+        message.addRecipient(Message.RecipientType.TO, new InternetAddress(email, email));
+        message.setSubject(subject);
+        message.setText(messageBody);
+        return message;
+    }
+
+    private class SendMailTask extends AsyncTask<Message, Void, Void> {
+        private ProgressDialog progressDialog;
+        View root = binding.getRoot();
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            progressDialog = ProgressDialog.show(root.getContext(), "Please wait", "Sending mail", true, false);
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            progressDialog.dismiss();
+        }
+
+        @Override
+        protected Void doInBackground(Message... messages) {
+            try {
+                Transport.send(messages[0]);
+            } catch (MessagingException e) {
+                e.printStackTrace();
             }
             return null;
         }
