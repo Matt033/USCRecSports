@@ -7,11 +7,14 @@ import static androidx.test.espresso.action.ViewActions.closeSoftKeyboard;
 import static androidx.test.espresso.action.ViewActions.replaceText;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
+import static androidx.test.espresso.matcher.ViewMatchers.withContentDescription;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withParent;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.Matchers.allOf;
 
+import android.os.AsyncTask;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
@@ -19,7 +22,6 @@ import android.view.ViewParent;
 import androidx.test.espresso.ViewInteraction;
 import androidx.test.filters.LargeTest;
 import androidx.test.rule.ActivityTestRule;
-
 import androidx.test.runner.AndroidJUnit4;
 
 import org.hamcrest.Description;
@@ -29,17 +31,25 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.Statement;
+
 import edu.usc.uscrecapp.R;
 
 @LargeTest
 @RunWith(AndroidJUnit4.class)
-public class LoginActivityTest {
+public class SummaryPreviousReservationVerification {
+    private static final String URL = "jdbc:mysql://10.0.2.2:3306/uscrecsports";
+    private static final String USER = "root";
+    private static final String PASSWORD = "Matthewwilson033!";
 
     @Rule
     public ActivityTestRule<LoginActivity> mActivityTestRule = new ActivityTestRule<>(LoginActivity.class);
 
     @Test
-    public void loginActivityTest() {
+    public void summaryPreviousReservationVerification() {
+        new ReservationAsync().execute();
         ViewInteraction appCompatEditText = onView(
                 allOf(withId(R.id.username),
                         childAtPosition(
@@ -73,12 +83,23 @@ public class LoginActivityTest {
                         isDisplayed()));
         materialButton.perform(click());
 
-        ViewInteraction textView = onView(
-                allOf(withText("Home"),
-                        withParent(allOf(withId(androidx.appcompat.R.id.action_bar),
-                                withParent(withId(androidx.appcompat.R.id.action_bar_container)))),
+        ViewInteraction bottomNavigationItemView = onView(
+                allOf(withId(R.id.navigation_notifications), withContentDescription("Summary"),
+                        childAtPosition(
+                                childAtPosition(
+                                        withId(R.id.nav_view),
+                                        0),
+                                2),
                         isDisplayed()));
-        textView.check(matches(withText("Home")));
+        bottomNavigationItemView.perform(click());
+
+        ViewInteraction textView = onView(
+                allOf(withText("Lyon Center from 12:00:00 to 14:00:00 on 2021-04-09"),
+                        withParent(allOf(withId(R.id.previous_layout),
+                                withParent(withId(R.id.vertical_layout)))),
+                        isDisplayed()));
+        textView.check(matches(withText("Lyon Center from 12:00:00 to 14:00:00 on 2021-04-09")));
+        new DeleteAsync().execute();
     }
 
     private static Matcher<View> childAtPosition(
@@ -98,5 +119,44 @@ public class LoginActivityTest {
                         && view.equals(((ViewGroup) parent).getChildAt(position));
             }
         };
+    }
+    public class ReservationAsync extends AsyncTask<Void, Void, Void> {
+        @Override
+        protected Void doInBackground(Void...voids){
+            try{
+                Connection connection = DriverManager.getConnection(URL, USER, PASSWORD);
+                Statement stmt = connection.createStatement();
+                String sql = "DELETE FROM reservations WHERE user_id=3";
+                stmt.executeUpdate(sql);
+
+                String sql2 = "INSERT INTO reservations(user_id,timeslot_id,location_id,date,availability_id)\n" +
+                        "VALUES(3,3,1,'2021-04-09',20);";
+                stmt.executeUpdate(sql2);
+
+            }
+            catch(Exception e){
+                Log.e("USC Rec Sports", "Error during MySQL communication", e);
+
+            }
+            return null;
+        }
+    }
+
+    public class DeleteAsync extends AsyncTask<Void, Void, Void>{
+        @Override
+        protected Void doInBackground(Void...voids){
+            try{
+                Connection connection = DriverManager.getConnection(URL, USER, PASSWORD);
+                Statement stmt = connection.createStatement();
+                String sql = "DELETE FROM reservations WHERE user_id=3";
+                stmt.executeUpdate(sql);
+
+            }
+            catch(Exception e){
+                Log.e("USC Rec Sports", "Error during MySQL communication", e);
+
+            }
+            return null;
+        }
     }
 }
