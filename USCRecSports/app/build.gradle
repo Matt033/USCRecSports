@@ -52,5 +52,10 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.0-alpha05'
     implementation 'mysql:mysql-connector-java:5.1.49'
     androidTestImplementation 'androidx.test:rules:1.4.0'
-    androidTestImplementation 'com.android.support.test:rules:1.0.2'
+    androidTestImplementation 'androidx.test:runner:1.4.0'
+    androidTestImplementation 'androidx.test:core:1.4.0'
+    debugImplementation 'androidx.test:monitor:1.5.0'
+    //androidTestImplementation 'com.android.support.test:rules:1.0.2'
+    androidTestImplementation 'androidx.fragment:fragment:1.4.1'
+    debugImplementation 'androidx.fragment:fragment-testing:1.4.1'
 }

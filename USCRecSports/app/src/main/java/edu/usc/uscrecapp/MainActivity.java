@@ -29,7 +29,9 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = getIntent();
         int id = intent.getIntExtra("userID", 1);
         setUserId(id);
+        setLocationId(2);
         System.out.println("ID: " + id);
+        System.out.println("Location: " +location_id);
 
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
