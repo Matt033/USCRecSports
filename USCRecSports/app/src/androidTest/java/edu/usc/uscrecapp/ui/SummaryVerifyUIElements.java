@@ -13,19 +13,11 @@ import static androidx.test.espresso.matcher.ViewMatchers.withParent;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.Matchers.allOf;
 
-import android.os.AsyncTask;
-import android.support.annotation.Nullable;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
-import android.widget.RelativeLayout;
 
 import androidx.test.espresso.ViewInteraction;
-import androidx.test.espresso.core.internal.deps.guava.base.Predicate;
-import androidx.test.espresso.core.internal.deps.guava.collect.Iterables;
-import androidx.test.espresso.core.internal.deps.guava.collect.Lists;
-import androidx.test.espresso.util.TreeIterables;
 import androidx.test.filters.LargeTest;
 import androidx.test.rule.ActivityTestRule;
 import androidx.test.runner.AndroidJUnit4;
@@ -33,33 +25,22 @@ import androidx.test.runner.AndroidJUnit4;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
+import org.hamcrest.core.IsInstanceOf;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.Statement;
-
-
 import edu.usc.uscrecapp.R;
-import edu.usc.uscrecapp.databinding.FragmentNotificationsBinding;
-import edu.usc.uscrecapp.ui.notifications.NotificationsFragment;
 
 @LargeTest
 @RunWith(AndroidJUnit4.class)
-public class SummaryUpcomingReservationVerification {
-    private static final String URL = "jdbc:mysql://10.0.2.2:3306/uscrecsports";
-    private static final String USER = "root";
-    private static final String PASSWORD = "Matthewwilson033!";
+public class SummaryVerifyUIElements {
 
     @Rule
     public ActivityTestRule<LoginActivity> mActivityTestRule = new ActivityTestRule<>(LoginActivity.class);
 
-
     @Test
-    public void summaryReservationVerification() {
-        new ReservationAsync().execute();
+    public void summaryVerifyUIElements() {
         ViewInteraction appCompatEditText = onView(
                 allOf(withId(R.id.username),
                         childAtPosition(
@@ -104,12 +85,39 @@ public class SummaryUpcomingReservationVerification {
         bottomNavigationItemView.perform(click());
 
         ViewInteraction textView = onView(
-                allOf(withText("Lyon Center from 12:00:00 to 14:00:00 on 2024-04-09"),
+                allOf(withText("Summary"),
+                        withParent(allOf(withId(androidx.appcompat.R.id.action_bar),
+                                withParent(withId(androidx.appcompat.R.id.action_bar_container)))),
+                        isDisplayed()));
+        textView.check(matches(withText("Summary")));
+
+        ViewInteraction textView2 = onView(
+                allOf(withId(R.id.textView1), withText("Next 3 Reservations:"),
                         withParent(allOf(withId(R.id.upcoming_layout),
                                 withParent(withId(R.id.vertical_layout)))),
                         isDisplayed()));
-        textView.check(matches(isDisplayed()));
-        new DeleteAsync().execute();
+        textView2.check(matches(withText("Next 3 Reservations:")));
+
+        ViewInteraction textView3 = onView(
+                allOf(withId(R.id.textView2), withText("3 Previous Reservations:"),
+                        withParent(allOf(withId(R.id.vertical_layout),
+                                withParent(IsInstanceOf.<View>instanceOf(android.view.ViewGroup.class)))),
+                        isDisplayed()));
+        textView3.check(matches(withText("3 Previous Reservations:")));
+
+        ViewInteraction textView4 = onView(
+                allOf(withId(R.id.waitList), withText("Your WaitList:"),
+                        withParent(allOf(withId(R.id.waiting_layout),
+                                withParent(withId(R.id.vertical_layout)))),
+                        isDisplayed()));
+        textView4.check(matches(withText("Your WaitList:")));
+
+        ViewInteraction textView5 = onView(
+                allOf(withId(R.id.waitList), withText("Your WaitList:"),
+                        withParent(allOf(withId(R.id.waiting_layout),
+                                withParent(withId(R.id.vertical_layout)))),
+                        isDisplayed()));
+        textView5.check(matches(withText("Your WaitList:")));
     }
 
     private static Matcher<View> childAtPosition(
@@ -129,43 +137,5 @@ public class SummaryUpcomingReservationVerification {
                         && view.equals(((ViewGroup) parent).getChildAt(position));
             }
         };
-    }
-
-    public class ReservationAsync extends AsyncTask<Void, Void, Void> {
-        @Override
-        protected Void doInBackground(Void... voids) {
-            try {
-                Connection connection = DriverManager.getConnection(URL, USER, PASSWORD);
-                Statement stmt = connection.createStatement();
-                String sql = "DELETE FROM reservations WHERE user_id=3";
-                stmt.executeUpdate(sql);
-
-                String sql2 = "INSERT INTO reservations(user_id,timeslot_id,location_id,date,availability_id)\n" +
-                        "VALUES(3,3,1,'2024-04-09',20);";
-                stmt.executeUpdate(sql2);
-
-            } catch (Exception e) {
-                Log.e("USC Rec Sports", "Error during MySQL communication", e);
-
-            }
-            return null;
-        }
-    }
-
-    public class DeleteAsync extends AsyncTask<Void, Void, Void> {
-        @Override
-        protected Void doInBackground(Void... voids) {
-            try {
-                Connection connection = DriverManager.getConnection(URL, USER, PASSWORD);
-                Statement stmt = connection.createStatement();
-                String sql = "DELETE FROM reservations WHERE user_id=3";
-                stmt.executeUpdate(sql);
-
-            } catch (Exception e) {
-                Log.e("USC Rec Sports", "Error during MySQL communication", e);
-
-            }
-            return null;
-        }
     }
 }

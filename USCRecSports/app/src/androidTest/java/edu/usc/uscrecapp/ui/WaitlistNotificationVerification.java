@@ -5,27 +5,19 @@ import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.action.ViewActions.closeSoftKeyboard;
 import static androidx.test.espresso.action.ViewActions.replaceText;
-import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withContentDescription;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
-import static androidx.test.espresso.matcher.ViewMatchers.withParent;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.Matchers.allOf;
 
 import android.os.AsyncTask;
-import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
-import android.widget.RelativeLayout;
 
 import androidx.test.espresso.ViewInteraction;
-import androidx.test.espresso.core.internal.deps.guava.base.Predicate;
-import androidx.test.espresso.core.internal.deps.guava.collect.Iterables;
-import androidx.test.espresso.core.internal.deps.guava.collect.Lists;
-import androidx.test.espresso.util.TreeIterables;
 import androidx.test.filters.LargeTest;
 import androidx.test.rule.ActivityTestRule;
 import androidx.test.runner.AndroidJUnit4;
@@ -41,14 +33,11 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.Statement;
 
-
 import edu.usc.uscrecapp.R;
-import edu.usc.uscrecapp.databinding.FragmentNotificationsBinding;
-import edu.usc.uscrecapp.ui.notifications.NotificationsFragment;
 
 @LargeTest
 @RunWith(AndroidJUnit4.class)
-public class SummaryUpcomingReservationVerification {
+public class WaitlistNotificationVerification {
     private static final String URL = "jdbc:mysql://10.0.2.2:3306/uscrecsports";
     private static final String USER = "root";
     private static final String PASSWORD = "Matthewwilson033!";
@@ -56,10 +45,10 @@ public class SummaryUpcomingReservationVerification {
     @Rule
     public ActivityTestRule<LoginActivity> mActivityTestRule = new ActivityTestRule<>(LoginActivity.class);
 
-
     @Test
-    public void summaryReservationVerification() {
-        new ReservationAsync().execute();
+    public void waitlistNotificationVerification() {
+        System.out.println("Starting test execution now");
+        new NotificationAsync().execute();
         ViewInteraction appCompatEditText = onView(
                 allOf(withId(R.id.username),
                         childAtPosition(
@@ -69,9 +58,31 @@ public class SummaryUpcomingReservationVerification {
                                                 0)),
                                 0),
                         isDisplayed()));
-        appCompatEditText.perform(replaceText("mwilson"), closeSoftKeyboard());
+        appCompatEditText.perform(click());
 
         ViewInteraction appCompatEditText2 = onView(
+                allOf(withId(R.id.username),
+                        childAtPosition(
+                                allOf(withId(R.id.container),
+                                        childAtPosition(
+                                                withId(android.R.id.content),
+                                                0)),
+                                0),
+                        isDisplayed()));
+        appCompatEditText2.perform(click());
+
+        ViewInteraction appCompatEditText3 = onView(
+                allOf(withId(R.id.username),
+                        childAtPosition(
+                                allOf(withId(R.id.container),
+                                        childAtPosition(
+                                                withId(android.R.id.content),
+                                                0)),
+                                0),
+                        isDisplayed()));
+        appCompatEditText3.perform(replaceText("mwilson"), closeSoftKeyboard());
+
+        ViewInteraction appCompatEditText4 = onView(
                 allOf(withId(R.id.password),
                         childAtPosition(
                                 allOf(withId(R.id.container),
@@ -80,7 +91,7 @@ public class SummaryUpcomingReservationVerification {
                                                 0)),
                                 1),
                         isDisplayed()));
-        appCompatEditText2.perform(replaceText("mwilson"), closeSoftKeyboard());
+        appCompatEditText4.perform(replaceText("mwilson"), closeSoftKeyboard());
 
         ViewInteraction materialButton = onView(
                 allOf(withId(R.id.login), withText("Sign in"),
@@ -103,12 +114,16 @@ public class SummaryUpcomingReservationVerification {
                         isDisplayed()));
         bottomNavigationItemView.perform(click());
 
-        ViewInteraction textView = onView(
-                allOf(withText("Lyon Center from 12:00:00 to 14:00:00 on 2024-04-09"),
-                        withParent(allOf(withId(R.id.upcoming_layout),
-                                withParent(withId(R.id.vertical_layout)))),
+        ViewInteraction button = onView(
+                allOf(withText("Cancel"),
+                        childAtPosition(
+                                allOf(withId(R.id.upcoming_layout),
+                                        childAtPosition(
+                                                withId(R.id.vertical_layout),
+                                                0)),
+                                2),
                         isDisplayed()));
-        textView.check(matches(isDisplayed()));
+        button.perform(click());
         new DeleteAsync().execute();
     }
 
@@ -131,20 +146,29 @@ public class SummaryUpcomingReservationVerification {
         };
     }
 
-    public class ReservationAsync extends AsyncTask<Void, Void, Void> {
+    public class NotificationAsync extends AsyncTask<Void, Void, Void> {
         @Override
-        protected Void doInBackground(Void... voids) {
-            try {
+        protected Void doInBackground(Void...voids){
+            try{
+                System.out.println("inside of notification async method");
                 Connection connection = DriverManager.getConnection(URL, USER, PASSWORD);
                 Statement stmt = connection.createStatement();
                 String sql = "DELETE FROM reservations WHERE user_id=3";
                 stmt.executeUpdate(sql);
 
-                String sql2 = "INSERT INTO reservations(user_id,timeslot_id,location_id,date,availability_id)\n" +
-                        "VALUES(3,3,1,'2024-04-09',20);";
+                String sql2 = "INSERT INTO availability(availability_id,location_id,timeslot_id,slots_available,date)" +
+                        "VALUES(1000,1,1,0,'MON');";
                 stmt.executeUpdate(sql2);
 
-            } catch (Exception e) {
+                String sql3 = "INSERT INTO reservations(user_id,timeslot_id,location_id,date,availability_id) VALUES(3,1,1,'2024-04-12',1000);";
+                stmt.executeUpdate(sql3);
+
+                String sql4 = "INSERT INTO waiting_lists(user_id, timeslot_id,location_id,date,availability_id)\n" +
+                        "VALUES(3,1,1,'2022-04-12',1000);";
+                stmt.executeUpdate(sql4);
+
+            }
+            catch(Exception e){
                 Log.e("USC Rec Sports", "Error during MySQL communication", e);
 
             }
@@ -152,20 +176,31 @@ public class SummaryUpcomingReservationVerification {
         }
     }
 
-    public class DeleteAsync extends AsyncTask<Void, Void, Void> {
+    public class DeleteAsync extends AsyncTask<Void, Void, Void>{
         @Override
-        protected Void doInBackground(Void... voids) {
-            try {
+        protected Void doInBackground(Void...voids){
+            try{
                 Connection connection = DriverManager.getConnection(URL, USER, PASSWORD);
                 Statement stmt = connection.createStatement();
                 String sql = "DELETE FROM reservations WHERE user_id=3";
                 stmt.executeUpdate(sql);
 
-            } catch (Exception e) {
+                String wait = "DELETE FROM waiting_lists WHERE availability_id=1000";
+                stmt.executeUpdate(wait);
+
+                String sql2= "DELETE FROM availability WHERE availability_id=1000";
+                stmt.executeUpdate(sql2);
+
+                String sql3 = "DELETE FROM waiting_lists WHERE user_id=3";
+                stmt.executeUpdate(sql3);
+
+            }
+            catch(Exception e){
                 Log.e("USC Rec Sports", "Error during MySQL communication", e);
 
             }
             return null;
         }
     }
+
 }
