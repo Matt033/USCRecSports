@@ -52,6 +52,12 @@ public class ReservationFragment extends Fragment {
     int location;
     int user_id;
 
+    public int getLocation() { return location; }
+    public int getUser_id() { return user_id; }
+    public boolean getRes() { return res; }
+    public Date getSelectedDate() { return selectedDate; }
+    public String getActiveDate() { return activeDate; }
+
     @Override
     public void onResume(){
         super.onResume();
@@ -242,7 +248,7 @@ public class ReservationFragment extends Fragment {
                 Button b = root.findViewById(buttonIDs[i]);
                 //Log.i(">>>>> ", "hello "+ a.timeslot_id);
                 String label =  a.starttime + " - " + a.endtime + "    " +
-                                a.slotsAvailable + " slots available";
+                        a.slotsAvailable + " slots available";
                 b.setText(label);
                 if(a.slotsAvailable == 0){
                     b.setEnabled(false);
@@ -310,7 +316,7 @@ public class ReservationFragment extends Fragment {
                 Availability a = result.get(buttonIDs[i]);
                 Button b = root.findViewById(buttonIDs[i]);
                 String label =  a.starttime + " - " + a.endtime + "    " +
-                                a.slotsAvailable + " slots available";
+                        a.slotsAvailable + " slots available";
                 b.setText(label);
                 if (res) {
                     if (a.slotsAvailable == 0)
