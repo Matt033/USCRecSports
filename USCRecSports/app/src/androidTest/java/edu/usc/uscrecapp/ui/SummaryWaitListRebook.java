@@ -1,5 +1,6 @@
 package edu.usc.uscrecapp.ui;
 
+
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.action.ViewActions.closeSoftKeyboard;
@@ -19,13 +20,16 @@ import android.view.ViewGroup;
 import android.view.ViewParent;
 
 import androidx.test.espresso.ViewInteraction;
+import androidx.test.filters.LargeTest;
 import androidx.test.rule.ActivityTestRule;
+import androidx.test.runner.AndroidJUnit4;
 
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -33,7 +37,9 @@ import java.sql.Statement;
 
 import edu.usc.uscrecapp.R;
 
-public class SummaryVerifyRebook {
+@LargeTest
+@RunWith(AndroidJUnit4.class)
+public class SummaryWaitListRebook {
     private static final String URL = "jdbc:mysql://10.0.2.2:3306/uscrecsports";
     private static final String USER = "root";
     private static final String PASSWORD = "Matthewwilson033!";
@@ -42,7 +48,7 @@ public class SummaryVerifyRebook {
     public ActivityTestRule<LoginActivity> mActivityTestRule = new ActivityTestRule<>(LoginActivity.class);
 
     @Test
-    public void summaryVerifyRebook() throws InterruptedException {
+    public void summaryWaitListRebook() {
         new DeleteAsync().execute();
         new ReservationAsync().execute();
         ViewInteraction appCompatEditText = onView(
@@ -87,20 +93,26 @@ public class SummaryVerifyRebook {
                                 2),
                         isDisplayed()));
         bottomNavigationItemView.perform(click());
-        Thread.sleep(2000);
+
+        ViewInteraction textView = onView(
+                allOf(withText("Lyon Center from 12:00:00 to 14:00:00 on 2024-04-09"),
+                        withParent(allOf(withId(R.id.waiting_layout),
+                                withParent(withId(R.id.vertical_layout)))),
+                        isDisplayed()));
+        textView.check(matches(withText("Lyon Center from 12:00:00 to 14:00:00 on 2024-04-09")));
 
         ViewInteraction button = onView(
                 allOf(withText("Cancel"),
                         childAtPosition(
-                                allOf(withId(R.id.upcoming_layout),
+                                allOf(withId(R.id.waiting_layout),
                                         childAtPosition(
                                                 withId(R.id.vertical_layout),
-                                                0)),
+                                                3)),
                                 2),
                         isDisplayed()));
         button.perform(click());
 
-        ViewInteraction bNavigationItemView = onView(
+        ViewInteraction bottomNavigationItemView2 = onView(
                 allOf(withId(R.id.navigation_home), withContentDescription("Home"),
                         childAtPosition(
                                 childAtPosition(
@@ -108,11 +120,12 @@ public class SummaryVerifyRebook {
                                         0),
                                 0),
                         isDisplayed()));
-        bNavigationItemView.perform(click());
-        new ReservationAsync().execute();
-        Thread.sleep(2000);
+        bottomNavigationItemView2.perform(click());
 
-        ViewInteraction NavigationItemView = onView(
+
+        new ReservationAsync().execute();
+
+        ViewInteraction bottomNavigationItemView3 = onView(
                 allOf(withId(R.id.navigation_notifications), withContentDescription("Summary"),
                         childAtPosition(
                                 childAtPosition(
@@ -120,18 +133,14 @@ public class SummaryVerifyRebook {
                                         0),
                                 2),
                         isDisplayed()));
-        NavigationItemView.perform(click());
+        bottomNavigationItemView3.perform(click());
 
-
-
-        ViewInteraction textView = onView(
+        ViewInteraction textView2 = onView(
                 allOf(withText("Lyon Center from 12:00:00 to 14:00:00 on 2024-04-09"),
-                        withParent(allOf(withId(R.id.upcoming_layout),
+                        withParent(allOf(withId(R.id.waiting_layout),
                                 withParent(withId(R.id.vertical_layout)))),
                         isDisplayed()));
-        textView.check(matches(isDisplayed()));
-
-
+        textView2.check(matches(withText("Lyon Center from 12:00:00 to 14:00:00 on 2024-04-09")));
         new DeleteAsync().execute();
     }
 
@@ -153,13 +162,14 @@ public class SummaryVerifyRebook {
             }
         };
     }
+
     public class ReservationAsync extends AsyncTask<Void, Void, Void> {
         @Override
         protected Void doInBackground(Void...voids){
             try{
                 Connection connection = DriverManager.getConnection(URL, USER, PASSWORD);
                 Statement stmt = connection.createStatement();
-                String sql2 = "INSERT INTO reservations(user_id,timeslot_id,location_id,date,availability_id)\n" +
+                String sql2 = "INSERT INTO waiting_lists(user_id,timeslot_id,location_id,date,availability_id)\n" +
                         "VALUES(3,3,1,'2024-04-09',20);";
                 stmt.executeUpdate(sql2);
 
@@ -178,7 +188,7 @@ public class SummaryVerifyRebook {
             try{
                 Connection connection = DriverManager.getConnection(URL, USER, PASSWORD);
                 Statement stmt = connection.createStatement();
-                String sql = "DELETE FROM reservations WHERE user_id=3";
+                String sql = "DELETE FROM waiting_lists WHERE user_id=3";
                 stmt.executeUpdate(sql);
 
             }
@@ -190,5 +200,3 @@ public class SummaryVerifyRebook {
         }
     }
 }
-
-
