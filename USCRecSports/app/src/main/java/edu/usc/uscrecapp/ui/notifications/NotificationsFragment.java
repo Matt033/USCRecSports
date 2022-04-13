@@ -1,5 +1,6 @@
 package edu.usc.uscrecapp.ui.notifications;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Color;
@@ -19,6 +20,9 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+
+import com.google.android.material.snackbar.BaseTransientBottomBar;
+import com.google.android.material.snackbar.Snackbar;
 
 import org.w3c.dom.Text;
 
@@ -287,7 +291,10 @@ public class NotificationsFragment extends Fragment {
                     }
                 });
                 upcomingRes.addView(cancelButton);
+
             }
+            int count = upcomingRes.getChildCount();
+            System.out.println("child count number " + count);
             int waitIndex = 0;
             for(int j = prevIndex; j < result.size(); j++){
                 String location = result.get(j).location;
@@ -452,27 +459,17 @@ public class NotificationsFragment extends Fragment {
                             System.out.println(emails.get(j));
                             emailList[j] = emails.get(j);
                         }
-
-//                        Intent emailIntent = new Intent(Intent.ACTION_SENDTO);
-//                        emailIntent.setData(Uri.parse("mailto:"));
-//                        emailIntent.setType("text/plain");
-//                        View root = binding.getRoot();
-//
-//                        emailIntent.putExtra(Intent.EXTRA_EMAIL, emailList);
-//                        emailIntent.putExtra(Intent.EXTRA_SUBJECT, "USC REC Sports Waiting List Update");
-//                        //location timeslot, date
-//                        emailIntent.putExtra(Intent.EXTRA_TEXT, "A new spot has opened up for one of your waitlist reservations. Please visit the USCRecSportsApp now to book!");
-//
-//                        startActivity(Intent.createChooser(emailIntent, "Send mail..."));
-//                        System.out.println("EMAIL SENT");
                         Looper.prepare();
-                        String email = "nhauptma@usc.edu";
+                        String email = "";
+                        View root = binding.getRoot();
                         String subject = "USC Rec Sports Update!";
                         String message = "Your notification from USC Rec Sports App!!";
                         for(int i = 0; i < emails.size(); i++){
                             email = emails.get(i);
                             sendMail(email,subject,message);
                         }
+                        Snackbar mySnackbar = Snackbar.make(root, "Waiting list has been notified", BaseTransientBottomBar.LENGTH_SHORT);
+                        mySnackbar.show();
                     }
                 }
                 currSpots++;
