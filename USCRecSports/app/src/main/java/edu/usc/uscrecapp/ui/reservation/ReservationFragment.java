@@ -130,6 +130,11 @@ public class ReservationFragment extends Fragment {
                 new DateSelectAsyncTask(R.id.button1, dateName).execute();
                 activeDate = dateName;
                 selectedDate = firstDate;
+                TextView t = root.findViewById(R.id.confirmation);
+                if (res)
+                    t.setText("Select time to make a reservation.");
+                else
+                    t.setText("Select time to be wait-listed.");
             }
         });
         b2.setOnClickListener(new View.OnClickListener() {
@@ -142,6 +147,11 @@ public class ReservationFragment extends Fragment {
                 new DateSelectAsyncTask(R.id.button2, dateName2).execute();
                 activeDate = dateName2;
                 selectedDate = secondDate;
+                TextView t = root.findViewById(R.id.confirmation);
+                if (res)
+                    t.setText("Select time to make a reservation.");
+                else
+                    t.setText("Select time to be wait-listed.");
             }
         });
 
@@ -155,6 +165,11 @@ public class ReservationFragment extends Fragment {
                 new DateSelectAsyncTask(R.id.button3, dateName3).execute();
                 activeDate = dateName3;
                 selectedDate = thirdDate;
+                TextView t = root.findViewById(R.id.confirmation);
+                if (res)
+                    t.setText("Select time to make a reservation.");
+                else
+                    t.setText("Select time to be wait-listed.");
             }
         });
 
