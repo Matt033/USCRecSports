@@ -6,6 +6,7 @@ import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.action.ViewActions.closeSoftKeyboard;
 import static androidx.test.espresso.action.ViewActions.replaceText;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
+import static androidx.test.espresso.matcher.ViewMatchers.isAssignableFrom;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withContentDescription;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
@@ -15,10 +16,14 @@ import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.contains;
 
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
+import android.widget.TextView;
 
+import androidx.test.espresso.UiController;
+import androidx.test.espresso.ViewAction;
 import androidx.test.espresso.ViewInteraction;
 import androidx.test.filters.LargeTest;
 import androidx.test.rule.ActivityTestRule;
@@ -95,11 +100,56 @@ public class ZeroReservationSlotTest {
                         isDisplayed()));
         textView.check(matches(withText("Reservation - Lyon Center")));
 
-        ViewInteraction button = onView(withId(R.id.button6));
-        button.perform(click());
+        ViewInteraction button;
+        String timeslot1 = getText(withId(R.id.button4));
+        String timeslot2 = getText(withId(R.id.button5));
+        String timeslot3 = getText(withId(R.id.button6));
+        String timeslot4 = getText(withId(R.id.button7));
+        Log.i(">>>> t1: ",timeslot1);
+        Log.i(">>>> t2: ", timeslot2);
+        Log.i(">>>> t3: ",timeslot3);
+        Log.i(">>>> t4: ", timeslot4);
+        if(timeslot1.contains(" 0 slots available")){
+            button = onView(withId(R.id.button4));
+            button.perform(click());
+        }
+        else if(timeslot2.contains(" 0 slots available")){
+            button = onView(withId(R.id.button5));
+            button.perform(click());
+        }
+        else if(timeslot3.contains(" 0 slots available")){
+            button = onView(withId(R.id.button6));
+            button.perform(click());
+        }
+        else if(timeslot4.contains(" 0 slots available")){
+            button = onView(withId(R.id.button7));
+            button.perform(click());
+        }
 
         ViewInteraction textConfirm = onView(withId(R.id.confirmation));
         textConfirm.check(matches(withText(containsString("Select time to make a reservation."))));
+    }
+
+    String getText(final Matcher<View> matcher) {
+        final String[] stringHolder = { null };
+        onView(matcher).perform(new ViewAction() {
+            @Override
+            public Matcher<View> getConstraints() {
+                return isAssignableFrom(TextView.class);
+            }
+
+            @Override
+            public String getDescription() {
+                return "getting text from a TextView";
+            }
+
+            @Override
+            public void perform(UiController uiController, View view) {
+                TextView tv = (TextView)view; //Save, because of check in getConstraints()
+                stringHolder[0] = tv.getText().toString();
+            }
+        });
+        return stringHolder[0];
     }
 
     private static Matcher<View> childAtPosition(

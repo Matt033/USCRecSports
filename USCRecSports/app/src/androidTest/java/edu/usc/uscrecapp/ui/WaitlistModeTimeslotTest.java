@@ -40,7 +40,7 @@ import edu.usc.uscrecapp.R;
 
 @LargeTest
 @RunWith(AndroidJUnit4.class)
-public class PressTimeslotTest {
+public class WaitlistModeTimeslotTest {
     @Rule
     public ActivityTestRule<LoginActivity> mActivityTestRule = new ActivityTestRule<>(LoginActivity.class);
 
@@ -79,16 +79,6 @@ public class PressTimeslotTest {
                         isDisplayed()));
         materialButton.perform(click());
 
-        /*ViewInteraction bottomNavigationItemView = onView(
-                allOf(withId(R.id.navigation_reservation), withContentDescription("Reservation"),
-                        childAtPosition(
-                                childAtPosition(
-                                        withId(R.id.nav_view),
-                                        0),
-                               2),
-                        isDisplayed()));
-        bottomNavigationItemView.perform(click());*/
-
         ViewInteraction materialButton2 = onView(
                 allOf(withId(R.id.navigation_reservation)));
         materialButton2.perform(click());
@@ -100,7 +90,11 @@ public class PressTimeslotTest {
                         isDisplayed()));
         textView.check(matches(withText("Reservation - Lyon Center")));
 
-        ViewInteraction button;
+        ViewInteraction button = onView(withId(R.id.button));
+        button.perform(click());
+        ViewInteraction textConfirm = onView(withId(R.id.confirmation));
+        textConfirm.check(matches(withText(containsString("Select time to be wait-listed."))));
+
         String timeslot1 = getText(withId(R.id.button4));
         String timeslot2 = getText(withId(R.id.button5));
         String timeslot3 = getText(withId(R.id.button6));
@@ -109,25 +103,25 @@ public class PressTimeslotTest {
         Log.i(">>>> t2: ", timeslot2);
         Log.i(">>>> t3: ",timeslot3);
         Log.i(">>>> t4: ", timeslot4);
-        if(!timeslot1.contains(" 0 slots available")){
+        if(timeslot1.contains(" 0 slots available")){
             button = onView(withId(R.id.button4));
             button.perform(click());
         }
-        else if(!timeslot2.contains(" 0 slots available")){
+        else if(timeslot2.contains(" 0 slots available")){
             button = onView(withId(R.id.button5));
             button.perform(click());
         }
-        else if(!timeslot3.contains(" 0 slots available")){
+        else if(timeslot3.contains(" 0 slots available")){
             button = onView(withId(R.id.button6));
             button.perform(click());
         }
-        else if(!timeslot4.contains(" 0 slots available")){
+        else if(timeslot4.contains(" 0 slots available")){
             button = onView(withId(R.id.button7));
             button.perform(click());
         }
 
-        ViewInteraction textConfirm = onView(withId(R.id.confirmation));
-        textConfirm.check(matches(withText(containsString("Reserved"))));
+        textConfirm = onView(withId(R.id.confirmation));
+        textConfirm.check(matches(withText(containsString("Wait-listed"))));
     }
 
     String getText(final Matcher<View> matcher) {
