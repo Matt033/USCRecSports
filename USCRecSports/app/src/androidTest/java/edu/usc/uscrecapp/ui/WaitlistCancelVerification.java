@@ -27,12 +27,15 @@ import androidx.test.runner.AndroidJUnit4;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
+import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.Statement;
 
 import edu.usc.uscrecapp.R;
@@ -121,6 +124,7 @@ public class WaitlistCancelVerification {
                                 2),
                         isDisplayed()));
         button.perform(click());
+        new checkDB().execute();
         new DeleteAsync().execute();
     }
 
@@ -168,10 +172,35 @@ public class WaitlistCancelVerification {
         @Override
         protected Void doInBackground(Void...voids){
             try{
+                System.out.println("INSIDE OF THIS FUNCTION");
                 Connection connection = DriverManager.getConnection(URL, USER, PASSWORD);
                 Statement stmt = connection.createStatement();
                 String sql = "DELETE FROM waiting_lists WHERE user_id=3";
                 stmt.executeUpdate(sql);
+
+            }
+            catch(Exception e){
+                Log.e("USC Rec Sports", "Error during MySQL communication", e);
+
+            }
+            return null;
+        }
+    }
+
+    public class checkDB extends AsyncTask<Void, Void, Void>{
+        @Override
+        protected Void doInBackground(Void...voids){
+            try{
+                Connection connection = DriverManager.getConnection(URL, USER, PASSWORD);
+                String sql = "SELECT * FROM waiting_lists WHERE user_id=3";
+                PreparedStatement statement = connection.prepareStatement(sql);
+                ResultSet resultSet = statement.executeQuery();
+                int count = 0;
+                while (resultSet.next()){
+                    count++;
+                }
+                System.out.println("count: " + count);
+                Assert.assertEquals(count, 0);
 
             }
             catch(Exception e){
