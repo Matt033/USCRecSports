@@ -1,4 +1,4 @@
-package edu.usc.uscrecapp.ui;
+package edu.usc.uscrecapp.testcase;
 
 
 import static androidx.test.espresso.Espresso.onView;
@@ -29,6 +29,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import edu.usc.uscrecapp.R;
+import edu.usc.uscrecapp.ui.LoginActivity;
 
 @LargeTest
 @RunWith(AndroidJUnit4.class)

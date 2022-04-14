@@ -1,4 +1,4 @@
-package edu.usc.uscrecapp.ui;
+package edu.usc.uscrecapp.testcase;
 
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
@@ -30,11 +30,12 @@ import java.sql.DriverManager;
 import java.sql.Statement;
 
 import edu.usc.uscrecapp.R;
+import edu.usc.uscrecapp.ui.LoginActivity;
 
 public class MultipleWaitlistNotificationVerification {
     private static final String URL = "jdbc:mysql://10.0.2.2:3306/uscrecsports";
     private static final String USER = "root";
-    private static final String PASSWORD = "Matthewwilson033!";
+    private static final String PASSWORD = "Barkley2001$";
 
     @Rule
     public ActivityTestRule<LoginActivity> mActivityTestRule = new ActivityTestRule<>(LoginActivity.class);
