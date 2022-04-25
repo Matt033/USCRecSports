@@ -2,6 +2,7 @@ package edu.usc.uscrecapp.ui.notifications;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
@@ -51,8 +52,8 @@ public class NotificationsFragment extends Fragment {
 
     private FragmentNotificationsBinding binding;
     private static final String URL = "jdbc:mysql://10.0.2.2:3306/uscrecsports";
-    private static final String USER = "root";
-    private static final String PASSWORD = "Matthewwilson033!";
+    private static String USER;
+    private static String PASSWORD;
     private static final String username = "matt033.wilson@gmail.com";
     private static final String password = "Matthewwilson033!";
 
@@ -63,6 +64,9 @@ public class NotificationsFragment extends Fragment {
 
         binding = FragmentNotificationsBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
+        USER = getString(R.string.db_username);
+        PASSWORD = getString(R.string.db_password);
+
 
         final TextView textView = binding.textNotifications;
         notificationsViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);

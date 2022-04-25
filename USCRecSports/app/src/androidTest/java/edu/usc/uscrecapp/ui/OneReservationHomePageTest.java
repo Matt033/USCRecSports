@@ -41,7 +41,7 @@ import edu.usc.uscrecapp.R;
 public class OneReservationHomePageTest {
     private static final String URL = "jdbc:mysql://10.0.2.2:3306/uscrecsports";
     private static final String USER = "root";
-    private static final String PASSWORD = "Barkley2001$";
+    private static final String PASSWORD = "Matthewwilson033!";
     @Rule
     public ActivityTestRule<LoginActivity> mActivityTestRule = new ActivityTestRule<>(LoginActivity.class);
 

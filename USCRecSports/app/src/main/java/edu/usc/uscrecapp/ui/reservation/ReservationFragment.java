@@ -34,8 +34,8 @@ import edu.usc.uscrecapp.databinding.FragmentReservationBinding;
 public class ReservationFragment extends Fragment {
 
     private static final String URL = "jdbc:mysql://10.0.2.2:3306/uscrecsports";
-    private static final String USER = "root";
-    private static final String PASSWORD = "root";
+    private static String USER;
+    private static String PASSWORD;
     private FragmentReservationBinding binding;
     private View root;
     int buttonIDs[] = {R.id.button4, R.id.button5, R.id.button6, R.id.button7};
@@ -83,6 +83,8 @@ public class ReservationFragment extends Fragment {
 
         location = ((MainActivity) getActivity()).getLocationId();
         user_id = ((MainActivity) getActivity()).getUserId();
+        USER = getString(R.string.db_username);
+        PASSWORD = getString(R.string.db_password);
         getParentFragmentManager().setFragmentResultListener("requestKey", this, new FragmentResultListener() {
             @Override
             public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle bundle) {

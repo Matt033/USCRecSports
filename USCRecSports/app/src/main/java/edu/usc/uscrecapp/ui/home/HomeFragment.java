@@ -129,8 +129,8 @@ public class HomeFragment extends Fragment {
     public class UpdateAsyncTask extends AsyncTask{
         int userID;
         private static final String URL = "jdbc:mysql://10.0.2.2:3306/uscrecsports";
-        private static final String USER = "root";
-        private static final String PASSWORD = "Barkley2001$";
+        private String USER;
+        private String PASSWORD;
 
         public UpdateAsyncTask(int id, String dt) {
             userID=((MainActivity) getActivity()).getUserId();
@@ -139,6 +139,8 @@ public class HomeFragment extends Fragment {
         @Override
         protected Void doInBackground(Object[] objects) {
             System.out.println("Background");
+            USER = getString(R.string.db_username);
+            PASSWORD = getString(R.string.db_password);
             try {
                 Connection connection = DriverManager.getConnection(URL, USER, PASSWORD);
                 String sql = "SELECT * FROM reservations WHERE user_id=" + userID + " AND DATE(reservations.date) >= DATE(NOW());";

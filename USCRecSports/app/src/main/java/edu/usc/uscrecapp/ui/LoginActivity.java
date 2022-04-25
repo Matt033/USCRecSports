@@ -97,6 +97,11 @@ public class LoginActivity extends AppCompatActivity {
 
 
                 new LoginAsyncTask(username, hashtext).execute();
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
                 response.setText("Invalid Login. Please enter in a new login");
             }
 
@@ -107,7 +112,7 @@ public class LoginActivity extends AppCompatActivity {
     public class LoginAsyncTask extends AsyncTask {
         private static final String URL = "jdbc:mysql://10.0.2.2:3306/uscrecsports";
         private static final String USER = "root";
-        private static final String PASSWORD = "Barkley2001$";
+        private static final String PASSWORD = "Matthewwilson033!";
         String username;
         String password;
 
