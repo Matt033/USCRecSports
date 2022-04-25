@@ -148,14 +148,17 @@ public class LoginActivity extends AppCompatActivity {
 
     public class LoginAsyncTask extends AsyncTask {
         private static final String URL = "jdbc:mysql://10.0.2.2:3306/uscrecsports";
-        private static final String USER = "root";
-        private static final String PASSWORD = "Barkley2001$";
+        private String USER;
+        private String PASSWORD;
         String username;
         String password;
 
         public LoginAsyncTask(String user, String pass) {
             username = user;
             password = pass;
+            USER = getString(R.string.db_username);
+            PASSWORD = getString(R.string.db_password);
+
         }
 
         @Override
@@ -192,14 +195,16 @@ public class LoginActivity extends AppCompatActivity {
 
     public class RegisterAsyncTask extends AsyncTask {
         private static final String URL = "jdbc:mysql://10.0.2.2:3306/uscrecsports";
-        private static final String USER = "root";
-        private static final String PASSWORD = "Barkley2001$";
+        private String USER;
+        private String PASSWORD;
         String username;
         String password;
 
         public RegisterAsyncTask(String user, String pass) {
             username = user;
             password = pass;
+            USER = getString(R.string.db_username);
+            PASSWORD = getString(R.string.db_password);
         }
 
         @Override
@@ -207,22 +212,23 @@ public class LoginActivity extends AppCompatActivity {
             System.out.println("Background");
             try {
                 Connection connection = DriverManager.getConnection(URL, USER, PASSWORD);
-                String sql = "SELECT * FROM users WHERE username = '" + username + "' AND password = '" + password + "'";
+                String sql = "SELECT * FROM users WHERE username = '" + username + "'";
                 PreparedStatement ps = connection.prepareStatement(sql);
                 ResultSet rs = ps.executeQuery();
-                if (rs.next()) {
+                if (rs.next() || username == "" || password == "") {
                     System.out.println("Existing Creds!");
                     usernameEditText.setText("");
                     passwordEditText.setText("");
+                    return null;
                 }
 
                 String sql2 = "INSERT INTO users (username, password) VALUES ('"+username+"', '"+password+"')";
-                PreparedStatement ps2 = connection.prepareStatement(sql);
-                ResultSet rs2 = ps.executeQuery();
+                PreparedStatement ps2 = connection.prepareStatement(sql2);
+                ps2.executeUpdate();
 
                 ResultSet rs3 = ps.executeQuery();
-                if (rs.next()) {
-                    int userID = rs.getInt("user_id");
+                if (rs3.next()) {
+                    int userID = rs3.getInt("user_id");
                     Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                     intent.putExtra("userID", userID);
                     startActivity(intent);
