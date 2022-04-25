@@ -6,6 +6,7 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 
 import androidx.annotation.Nullable;
@@ -24,6 +25,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 import androidx.navigation.Navigation;
 
+import com.google.android.material.snackbar.BaseTransientBottomBar;
+import com.google.android.material.snackbar.Snackbar;
+
+import org.w3c.dom.Text;
+
 import edu.usc.uscrecapp.MainActivity;
 import edu.usc.uscrecapp.R;
 
@@ -38,6 +44,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.*;
 import java.util.Arrays;
+import java.util.concurrent.ExecutionException;
 
 import edu.usc.uscrecapp.R;
 import edu.usc.uscrecapp.ui.home.HomeFragment;
@@ -47,7 +54,9 @@ import edu.usc.uscrecapp.ui.home.HomeFragment;
 //import edu.usc.uscrecapp.databinding.FragmentNotificationsBinding;
 
 public class LoginActivity extends AppCompatActivity {
-
+    EditText usernameEditText;
+    EditText passwordEditText;
+    TextView response;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -55,8 +64,9 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        final EditText usernameEditText = (EditText) findViewById(R.id.username);
-        final EditText passwordEditText = (EditText) findViewById(R.id.password);
+        usernameEditText = (EditText) findViewById(R.id.username);
+        passwordEditText = (EditText) findViewById(R.id.password);
+        response = (TextView) findViewById(R.id.Feedback);
         final Button loginButton = (Button) findViewById(R.id.login);
 
 
@@ -85,73 +95,57 @@ public class LoginActivity extends AppCompatActivity {
                 }
                 System.out.println(hashtext);
 
-                String [] usernames = {"jjso", "nhauptman", "mwilson", "trojan", "test", "test1", "test2"};
-                String [] hashes = {"94afe94ba08b50041f1f3fac087342ae", "8da388593b98421fa2e1c9b49d8bdf83", "aad6b199637cf8ec469761c71747004c", "ce60528079a4e3b33eb71b88a045c31a", "098f6bcd4621d373cade4e832627b4f6", "5a105e8b9d40e1329780d62ea2265d8a", "ad0234829205b9033196ba818f7a872b"};
 
-                boolean validCreds = false;
-                int userID = -1;
-                for(int i=0; i<7; i++){
-                    if(username.equals(usernames[i]) && hashtext.equals(hashes[i])){
-                        validCreds = true;
-                        userID = i+1;
-                    }
-                }
-
-                if(validCreds){
-                    System.out.println("Valid Creds!");
-                    Bundle result = new Bundle();
-                    result.putInt("user_id", userID);
-                    usernameEditText.setText("");
-                    passwordEditText.setText("");
-                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                    intent.putExtra("userID", userID);
-                    startActivity(intent);
-                }
-                else{
-
-                    TextView response = (TextView) findViewById(R.id.Feedback);
-                    response.setText("Invalid Login. Please enter in a new login");
-                    usernameEditText.setText("");
-                    passwordEditText.setText("");
-                }
-
-//                Connection connection = null;
-//                try {
-//                    try {
-//                        Class.forName("com.mysql.cj.jdbc.Driver");
-//                        connection = DriverManager.getConnection("jdbc:mysql://10.0.2.2:3306/uscrecsports?user=root&password=Barkley2001$");
-//                    } catch (ClassNotFoundException e) {
-//                        e.printStackTrace();
-//                    }
-//
-//                    String sql = "SELECT * FROM users WHERE username = '" + username + "' AND password = '" + password + "'";
-//                    PreparedStatement ps = connection.prepareStatement(sql);
-//                    ResultSet rs = ps.executeQuery();
-//                    if (rs.next()) {
-//                        System.out.println("Valid Creds!");
-//                        int userID = rs.getInt("user_id");
-//                        Bundle result = new Bundle();
-//                        result.putInt("user_id", userID);
-//                        usernameEditText.setText("");
-//                        passwordEditText.setText("");
-//
-//                      getSupportFragmentManager().setFragmentResult("requestKey", result);
-////                      // now switch to reservation fragment page
-//                      Navigation.findNavController(v).navigate(R.id.navigation_home);
-//                    } else {
-//                        System.out.println("Invalid Creds!");
-////                        TextView response = (TextView) findViewById(R.id.Feedback);
-////                        response.setText("Invalid Login. Please enter in a new login");
-////                        usernameEditText.setText("");
-////                        passwordEditText.setText("");
-//                    }
-//                } catch (SQLException throwables) {
-//                    throwables.printStackTrace();
-//                }
-
+                new LoginAsyncTask(username, hashtext).execute();
+                //response.setText("Invalid Login. Please enter in a new login");
             }
 
         });
 
     }
+
+    public class LoginAsyncTask extends AsyncTask {
+        private static final String URL = "jdbc:mysql://10.0.2.2:3306/uscrecsports";
+        private static final String USER = "root";
+        private static final String PASSWORD = "Barkley2001$";
+        String username;
+        String password;
+
+        public LoginAsyncTask(String user, String pass) {
+            username = user;
+            password = pass;
+        }
+
+        @Override
+        protected Void doInBackground(Object[] objects) {
+            System.out.println("Background");
+            try {
+                Connection connection = DriverManager.getConnection(URL, USER, PASSWORD);
+                String sql = "SELECT * FROM users WHERE username = '" + username + "' AND password = '" + password + "'";
+                PreparedStatement ps = connection.prepareStatement(sql);
+                ResultSet rs = ps.executeQuery();
+                if (rs.next()) {
+                    System.out.println("Valid Creds!");
+                    int userID = rs.getInt("user_id");
+                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                    intent.putExtra("userID", userID);
+                    startActivity(intent);
+                } else {
+                    System.out.println("Invalid Creds!");
+                    usernameEditText.setText("");
+                    passwordEditText.setText("");
+                    response.setText("Invalid Login. Please enter in a new login");
+                    View root = findViewById(R.id.container);
+                    Snackbar mySnackbar = Snackbar.make(root, "Invalid Login. Please enter in a new login", BaseTransientBottomBar.LENGTH_LONG);
+                    mySnackbar.show();
+                }
+
+
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+            }
+            return null;
+        }
+    }
+
 }
