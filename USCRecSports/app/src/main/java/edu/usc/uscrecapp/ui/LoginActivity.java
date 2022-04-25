@@ -97,7 +97,7 @@ public class LoginActivity extends AppCompatActivity {
 
 
                 new LoginAsyncTask(username, hashtext).execute();
-                //response.setText("Invalid Login. Please enter in a new login");
+                response.setText("Invalid Login. Please enter in a new login");
             }
 
         });
@@ -134,7 +134,7 @@ public class LoginActivity extends AppCompatActivity {
                     System.out.println("Invalid Creds!");
                     usernameEditText.setText("");
                     passwordEditText.setText("");
-                    response.setText("Invalid Login. Please enter in a new login");
+                    //response.setText("Invalid Login. Please enter in a new login");
                     View root = findViewById(R.id.container);
                     Snackbar mySnackbar = Snackbar.make(root, "Invalid Login. Please enter in a new login", BaseTransientBottomBar.LENGTH_LONG);
                     mySnackbar.show();
