@@ -154,18 +154,28 @@ public class HomeFragment extends Fragment {
                 System.out.println("RC:"+rowCount);
                 String resDates = "";
                 int count = 0;
-                while(resultSet.next() && count < 3){
-                    resDates += resultSet.getDate("date");
-                    resDates += ",\n";
+                while(resultSet.next()){
+                    if(count < 3){
+                        resDates += resultSet.getDate("date").toString().substring(5);
+                        resDates += ", ";
+                    }
                     count++;
                 }
-                if(count == 3){
+                if(count == 1 || count == 2 || count == 3){
+                    resDates = resDates.substring(0, resDates.length()-2);
+                }
+                if(count > 3){
                     resDates += " etc";
                 }
                 System.out.println(resDates);
 
                 if(rowCount > 0){
-                    b_summary.setText("View your "+rowCount+" upcoming reservations on \n"+resDates);
+                    if(rowCount == 1){
+                        b_summary.setText("View your "+rowCount+"\n upcoming reservation on \n"+resDates);
+                    }
+                    else{
+                        b_summary.setText("View your "+rowCount+"\n upcoming reservations on \n"+resDates);
+                    }
                 }
 
             } catch (SQLException throwables) {

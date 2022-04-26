@@ -23,7 +23,7 @@ test
     <TextView
         android:layout_height="80dp"
         android:layout_width="140dp"
-        android:translationX="10dp"
+        android:translationX="30dp"
         android:translationY="45dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -36,16 +36,16 @@ test
 
     <TextView
         android:id="@+id/Summary"
-        android:layout_width="170dp"
-        android:layout_height="90dp"
-        android:background="@color/black"
+        android:layout_width="150dp"
+        android:layout_height="70dp"
+        android:background="@color/purple_500"
         android:text="User Profile Page"
         android:textSize="10dp"
         android:textColor="@color/white"
         android:textAlignment="center"
         android:gravity="center"
-        android:translationX="155dp"
-        android:translationY="30dp"
+        android:translationX="205dp"
+        android:translationY="50dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -62,7 +62,7 @@ test
     </ImageView>
     <Button
         android:id="@+id/Cromwell"
-        android:layout_width="95dp"
+        android:layout_width="100dp"
         android:layout_height="50dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -74,7 +74,7 @@ test
 
     <Button
         android:id="@+id/lyonCenter"
-        android:layout_width="75dp"
+        android:layout_width="80dp"
         android:layout_height="50dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -89,7 +89,7 @@ test
     <Button
         android:id="@+id/Village"
         android:layout_width="105dp"
-        android:layout_height="40dp"
+        android:layout_height="45dp"
         android:layout_marginBottom="254dp"
         android:backgroundTint="@color/black"
         android:text="Village Gym"
