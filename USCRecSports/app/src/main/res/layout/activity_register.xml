@@ -63,7 +63,6 @@
         android:translationY="90dp"
         android:imeActionLabel="Sign in"
         android:imeOptions="actionDone"
-        android:inputType="textPassword"
         android:selectAllOnFocus="true"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -124,8 +123,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text=""
-        android:translationX="60dp"
-        android:translationY="455dp"
+        android:translationX="10dp"
+        android:translationY="415dp"
         />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

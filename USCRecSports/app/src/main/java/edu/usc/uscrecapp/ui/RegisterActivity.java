@@ -72,6 +72,7 @@ public class RegisterActivity extends AppCompatActivity {
                     response.setText("Invalid Registration. Please make sure your password entries match");
                     usernameEditText.setText("");
                     passwordEditText.setText("");
+                    passwordConfirmEditText.setText("");
                     emailEditText.setText("");
                     return;
                 }
