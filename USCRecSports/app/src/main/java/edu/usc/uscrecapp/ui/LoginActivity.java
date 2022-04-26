@@ -111,35 +111,8 @@ public class LoginActivity extends AppCompatActivity {
         registerButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                String username = usernameEditText.getText().toString();
-                String password = passwordEditText.getText().toString();
-
-                MessageDigest md = null;
-                try {
-                    md = MessageDigest.getInstance("MD5");
-                } catch (NoSuchAlgorithmException e) {
-                    e.printStackTrace();
-                }
-                md.update(password.getBytes());
-                byte[] digest = md.digest();
-                BigInteger no = new BigInteger(1, digest);
-
-                // Convert message digest into hex value
-                String hashtext = no.toString(16);
-                while (hashtext.length() < 32) {
-                    hashtext = "0" + hashtext;
-                }
-                System.out.println(hashtext);
-
-
-                new RegisterAsyncTask(username, hashtext).execute();
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                //response.setText("Invalid Login. Please enter in a new login");
+                Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
+                startActivity(intent);
             }
 
         });
@@ -185,54 +158,6 @@ public class LoginActivity extends AppCompatActivity {
                     mySnackbar.show();
                 }
 
-
-            } catch (SQLException throwables) {
-                throwables.printStackTrace();
-            }
-            return null;
-        }
-    }
-
-    public class RegisterAsyncTask extends AsyncTask {
-        private static final String URL = "jdbc:mysql://10.0.2.2:3306/uscrecsports";
-        private String USER;
-        private String PASSWORD;
-        String username;
-        String password;
-
-        public RegisterAsyncTask(String user, String pass) {
-            username = user;
-            password = pass;
-            USER = getString(R.string.db_username);
-            PASSWORD = getString(R.string.db_password);
-        }
-
-        @Override
-        protected Void doInBackground(Object[] objects) {
-            System.out.println("Background");
-            try {
-                Connection connection = DriverManager.getConnection(URL, USER, PASSWORD);
-                String sql = "SELECT * FROM users WHERE username = '" + username + "'";
-                PreparedStatement ps = connection.prepareStatement(sql);
-                ResultSet rs = ps.executeQuery();
-                if (rs.next() || username == "" || password == "") {
-                    System.out.println("Existing Creds!");
-                    usernameEditText.setText("");
-                    passwordEditText.setText("");
-                    return null;
-                }
-
-                String sql2 = "INSERT INTO users (username, password) VALUES ('"+username+"', '"+password+"')";
-                PreparedStatement ps2 = connection.prepareStatement(sql2);
-                ps2.executeUpdate();
-
-                ResultSet rs3 = ps.executeQuery();
-                if (rs3.next()) {
-                    int userID = rs3.getInt("user_id");
-                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                    intent.putExtra("userID", userID);
-                    startActivity(intent);
-                }
 
             } catch (SQLException throwables) {
                 throwables.printStackTrace();
