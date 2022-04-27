@@ -1,8 +1,10 @@
 package edu.usc.uscrecapp.ui.notifications;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
@@ -47,6 +49,7 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
 import edu.usc.uscrecapp.databinding.FragmentNotificationsBinding;
+import edu.usc.uscrecapp.ui.reservation.ReservationFragment;
 
 public class NotificationsFragment extends Fragment {
 
@@ -56,6 +59,7 @@ public class NotificationsFragment extends Fragment {
     private static String PASSWORD;
     private static final String username = "matt033.wilson@gmail.com";
     private static final String password = "Matthewwilson033!";
+    AlertDialog.Builder myBuilder;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -66,7 +70,7 @@ public class NotificationsFragment extends Fragment {
         View root = binding.getRoot();
         USER = getString(R.string.db_username);
         PASSWORD = getString(R.string.db_password);
-
+        myBuilder=new AlertDialog.Builder(getActivity());
 
         final TextView textView = binding.textNotifications;
         notificationsViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
@@ -288,10 +292,29 @@ public class NotificationsFragment extends Fragment {
                 cancelButton.setOnClickListener(new View.OnClickListener(){
                     @Override
                     public void onClick(View view){
-                        upcomingRes.removeView(view); //removes button
-                        upcomingRes.removeView(newReservation); //removes reservation
-                        System.out.println("calling timeselect function here");
-                        new TimeSelectAsyncTask(reservation_id, availability_id).execute();
+                        myBuilder.setTitle("Alert!");
+                        myBuilder.setMessage("Are you sure you want to cancel?");
+                        myBuilder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog,
+                                                int which)
+                            {
+                                upcomingRes.removeView(view); //removes button
+                                upcomingRes.removeView(newReservation); //removes reservation
+                                System.out.println("calling timeselect function here");
+                                new TimeSelectAsyncTask(reservation_id, availability_id).execute();
+                            }
+                        });
+                        myBuilder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog,
+                                                int which)
+                            {
+                                dialog.cancel();
+                            }
+                        });
+                        AlertDialog alert = myBuilder.create();
+                        alert.show();
                     }
                 });
                 upcomingRes.addView(cancelButton);
@@ -355,10 +378,29 @@ public class NotificationsFragment extends Fragment {
                 cancelButton.setOnClickListener(new View.OnClickListener(){
                     @Override
                     public void onClick(View view){
-                        waitRes.removeView(view); //removes button
-                        waitRes.removeView(newReservation); //removes reservation
-                        System.out.println("calling timeselect function here");
-                        new WaitListAsyncTask(reservation_id).execute();
+                        myBuilder.setTitle("Alert!");
+                        myBuilder.setMessage("Are you sure you want to cancel?");
+                        myBuilder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog,
+                                                int which)
+                            {
+                                waitRes.removeView(view); //removes button
+                                waitRes.removeView(newReservation); //removes reservation
+                                System.out.println("calling timeselect function here");
+                                new WaitListAsyncTask(reservation_id).execute();
+                            }
+                        });
+                        myBuilder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog,
+                                                int which)
+                            {
+                                dialog.cancel();
+                            }
+                        });
+                        AlertDialog alert = myBuilder.create();
+                        alert.show();
                     }
                 });
                 waitRes.addView(cancelButton);

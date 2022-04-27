@@ -1,6 +1,9 @@
 package edu.usc.uscrecapp.ui.reservation;
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
+import android.app.AlertDialog.Builder;
+import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -46,6 +49,7 @@ public class ReservationFragment extends Fragment {
     String dateName3;
     Date selectedDate;
     Date firstDate, secondDate, thirdDate;
+    AlertDialog.Builder myBuilder;
 
     // This flag represents the mode between reservation and wait-list
     boolean res = true;
@@ -77,6 +81,7 @@ public class ReservationFragment extends Fragment {
 
         binding = FragmentReservationBinding.inflate(inflater, container, false);
         root = binding.getRoot();
+        myBuilder=new AlertDialog.Builder(getActivity());
 
         final TextView textView = binding.textReservation;
         reservationViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
@@ -126,6 +131,7 @@ public class ReservationFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 //Button b1 = (Button)view;
+
                 b1.setBackgroundColor(Color.RED);
                 b2.setBackgroundColor(Color.BLUE);
                 b3.setBackgroundColor(Color.BLUE);
@@ -176,21 +182,43 @@ public class ReservationFragment extends Fragment {
         });
 
         Button rb = root.findViewById(R.id.button);
+
         rb.setBackgroundColor(Color.BLUE);
         rb.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                myBuilder.setTitle("Confirmation");
+                if(res){
+                    myBuilder.setMessage("You switched to waitlist mode");
+                }
+                else{
+
+                    myBuilder.setMessage("You switched to reservation mode");
+                }
+                myBuilder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog,
+                                        int which)
+                    {
+                        dialog.cancel();
+                    }
+                });
+
+                AlertDialog alert = myBuilder.create();
+                alert.show();
                 Button b = (Button)view;
                 TextView t = root.findViewById(R.id.confirmation);
                 if (res) {
                     b.setBackgroundColor(Color.RED);
                     b.setText("switch to Reservation");
+                    root.setBackgroundColor(Color.parseColor("#ffb6c1"));
                     res = false;
                     t.setText("Select time to be wait-listed.");
                 } else {
                     b.setBackgroundColor(Color.BLUE);
                     res = true;
                     b.setText("remind me");
+                    root.setBackgroundColor(Color.WHITE);
                     t.setText("Select time to make a reservation.");
                 }
                 for (int i = 0; i < buttonIDs.length; i++) {
@@ -274,9 +302,37 @@ public class ReservationFragment extends Fragment {
                     @Override
                     public void onClick(View view) {
                         Log.i(">>> slots", ""+a.slotsAvailable);
-                        if (res)
+                        myBuilder.setTitle("Confirmation");
+                        if(res){
+                            myBuilder.setMessage("Are you sure you want to add this reservation for " + a.starttime + " - " + a.endtime + " at " + selectedDate + "?");
+                        }
+                        else{
+                            myBuilder.setMessage("Are you sure you want to add " + a.starttime + " - " + a.endtime + " at " + selectedDate + " on the waitlist?");
+                        }
+                        myBuilder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog,
+                                                int which)
+                            {
+                                if (res)
+                                    a.slotsAvailable--;
+                                new TimeSelectAsyncTask(a.button_id, a.starttime, a.endtime, a.slotsAvailable, a.timeslot_id).execute();
+                            }
+                        });
+                        myBuilder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog,
+                                                int which)
+                            {
+                                dialog.cancel();
+                            }
+                        });
+                        AlertDialog alert = myBuilder.create();
+                        alert.show();
+                        /*if (res)
                             a.slotsAvailable--;
                         new TimeSelectAsyncTask(a.button_id, a.starttime, a.endtime, a.slotsAvailable, a.timeslot_id).execute();
+                        */
                     }
                 });
             }
@@ -350,9 +406,38 @@ public class ReservationFragment extends Fragment {
                     @Override
                     public void onClick(View view) {
                         //Log.i(">>>> button ids "+info.size(), ""+info.keySet());
-                        if (res)
+                        myBuilder.setTitle("Confirmation");
+                        if(res){
+                            myBuilder.setMessage("Are you sure you want to add this reservation for " + a.starttime + " - " + a.endtime + " at " + selectedDate + "?");
+                        }
+                        else{
+                            myBuilder.setMessage("Are you sure you want to add " + a.starttime + " - " + a.endtime + " at " + selectedDate + " on the waitlist?");
+                        }
+                        myBuilder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog,
+                                                int which)
+                            {
+                                if (res)
+                                    a.slotsAvailable--;
+                                new TimeSelectAsyncTask(a.button_id, a.starttime, a.endtime, a.slotsAvailable, a.timeslot_id).execute();
+                            }
+                        });
+                        myBuilder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog,
+                                                int which)
+                            {
+                                dialog.cancel();
+                            }
+                        });
+
+                        AlertDialog alert = myBuilder.create();
+                        alert.show();
+                        /*if (res)
                             a.slotsAvailable--;
                         new TimeSelectAsyncTask(a.button_id, a.starttime, a.endtime, a.slotsAvailable, a.timeslot_id).execute();
+                         */
                     }
                 });
             }
