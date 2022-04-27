@@ -18,7 +18,7 @@
 
     <item
         android:id="@+id/navigation_userProfile"
-        android:icon="@drawable/ic_notifications_black_24dp"
+        android:icon="@drawable/ic_reservation_black_24dp"
         android:title="User Profile" />
 
 </menu>
