@@ -1,4 +1,4 @@
-package edu.usc.uscrecapp.ui;
+package edu.usc.uscrecapp.ui.userprofile;
 
 import androidx.lifecycle.ViewModelProvider;
 
