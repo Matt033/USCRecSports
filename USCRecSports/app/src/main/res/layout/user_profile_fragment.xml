@@ -50,19 +50,28 @@
         android:text="Change Password" />
 
     <EditText
+        android:id="@+id/passwordPlace"
         android:layout_width="150dp"
         android:layout_height="35dp"
         android:translationX="60dp"
         android:translationY="295dp"
-        android:text="New Password"
         android:textSize="10dp"/>
 
     <Button
+        android:id="@+id/passwordButton"
         android:layout_width="140dp"
         android:layout_height="35dp"
         android:translationX="60dp"
         android:textSize="10dp"
         android:translationY="335dp"
         android:text="Update Password" />
+
+    <TextView
+        android:id="@+id/Feedback"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text=""
+        android:translationX="60dp"
+        android:translationY="365dp" />
 
 </FrameLayout>

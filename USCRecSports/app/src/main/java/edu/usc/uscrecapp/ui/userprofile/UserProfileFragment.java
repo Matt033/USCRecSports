@@ -2,6 +2,7 @@ package edu.usc.uscrecapp.ui.userprofile;
 
 import androidx.lifecycle.ViewModelProvider;
 
+import android.media.AsyncPlayer;
 import android.os.AsyncTask;
 import android.os.Bundle;
 
@@ -14,8 +15,13 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 
+import java.math.BigInteger;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.sql.Blob;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -38,6 +44,9 @@ public class UserProfileFragment extends Fragment {
     private static String PASSWORD;
     TextView username;
     TextView email;
+    EditText newPassword;
+    String passwordString;
+    TextView response;
 
 
 
@@ -61,6 +70,25 @@ public class UserProfileFragment extends Fragment {
 
         username = (TextView) root.findViewById(R.id.usernamePlace);
         email = (TextView) root.findViewById(R.id.emailPlace);
+        response = (TextView) root.findViewById(R.id.Feedback);
+
+
+
+        Button updatePassword = (Button) root.findViewById(R.id.passwordButton);
+        updatePassword.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view){
+                newPassword = (EditText) root.findViewById(R.id.passwordPlace);
+                passwordString = newPassword.getText().toString();
+                if(!passwordString.isEmpty()){
+                    new PasswordAsync().execute();
+                    response.setText("Password updated successfully");
+                }
+                else{
+                    response.setText("Change password field must not be empty");
+                }
+            }
+        });
 
 
         new InfoAsyncTask().execute();
@@ -104,6 +132,42 @@ public class UserProfileFragment extends Fragment {
 
             username.setText(result.get(0));
             email.setText(result.get(1));
+        }
+    }
+
+    public class PasswordAsync extends AsyncTask<Void, Void, Void>{
+        protected Void doInBackground(Void...voids){
+            try {
+                int user_id = ((MainActivity) getActivity()).getUserId();
+                Connection connection = DriverManager.getConnection(URL, USER, PASSWORD);
+                MessageDigest md = null;
+                try {
+                    md = MessageDigest.getInstance("MD5");
+                } catch (NoSuchAlgorithmException e) {
+                    e.printStackTrace();
+                }
+                md.update(passwordString.getBytes());
+                byte[] digest = md.digest();
+                BigInteger no = new BigInteger(1, digest);
+
+                // Convert message digest into hex value
+                String hashtext = no.toString(16);
+                while (hashtext.length() < 32) {
+                    hashtext = "0" + hashtext;
+                }
+
+                String updateStatement = "UPDATE users SET password=? WHERE user_id=?";
+                PreparedStatement preparedStatement = connection.prepareStatement(updateStatement);
+                preparedStatement.setString(1,hashtext);
+                preparedStatement.setInt(2,user_id);
+
+                preparedStatement.executeUpdate();
+
+
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+            }
+            return null;
         }
     }
 
