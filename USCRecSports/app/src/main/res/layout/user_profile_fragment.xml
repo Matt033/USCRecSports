@@ -6,8 +6,63 @@
     tools:context=".ui.userprofile.UserProfileFragment">
 
     <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="Hello" />
+        android:layout_width="140dp"
+        android:layout_height="25dp"
+        android:translationX="60dp"
+        android:translationY="75dp"
+        android:text="User Profile Page" />
+
+    <TextView
+        android:layout_width="75dp"
+        android:layout_height="25dp"
+        android:translationX="60dp"
+        android:translationY="125dp"
+        android:text="Username" />
+
+    <TextView
+        android:id="@+id/usernamePlace"
+        android:layout_width="150dp"
+        android:layout_height="25dp"
+        android:translationX="60dp"
+        android:translationY="155dp"
+        android:text="Username Placeholder" />
+
+    <TextView
+        android:layout_width="75dp"
+        android:layout_height="25dp"
+        android:translationX="60dp"
+        android:translationY="195dp"
+        android:text="Email" />
+
+    <TextView
+        android:layout_width="150dp"
+        android:id="@+id/emailPlace"
+        android:layout_height="25dp"
+        android:translationX="60dp"
+        android:translationY="225dp"
+        android:text="Email Placeholder" />
+
+    <TextView
+        android:layout_width="150dp"
+        android:layout_height="75dp"
+        android:translationX="60dp"
+        android:translationY="275dp"
+        android:text="Change Password" />
+
+    <EditText
+        android:layout_width="150dp"
+        android:layout_height="35dp"
+        android:translationX="60dp"
+        android:translationY="295dp"
+        android:text="New Password"
+        android:textSize="10dp"/>
+
+    <Button
+        android:layout_width="140dp"
+        android:layout_height="35dp"
+        android:translationX="60dp"
+        android:textSize="10dp"
+        android:translationY="335dp"
+        android:text="Update Password" />
 
 </FrameLayout>
